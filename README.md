@@ -1,7 +1,6 @@
+# 🌍 **Eco-Code Analyzer v0.4.0** ![Eco-Friendly Badge](https://img.shields.io/badge/Eco-Friendly-green) ![Python](https://img.shields.io/badge/Python-3.x-blue)
 
-# 🌍 **Eco-Code Analyzer** ![Eco-Friendly Badge](https://img.shields.io/badge/Eco-Friendly-green) ![Python](https://img.shields.io/badge/Python-3.x-blue)
-
-Eco-Code Analyzer is a Python library that analyzes code for its ecological impact, providing developers with insights and recommendations to write more environmentally friendly and efficient code. By optimizing code for energy efficiency and resource usage, we can collectively reduce the carbon footprint of our software.
+Eco-Code Analyzer is a Python library that analyzes code for its ecological impact, providing developers with insights and recommendations to write more environmentally friendly and efficient code. By optimizing code for energy efficiency, resource usage, I/O operations, and algorithm selection, we can collectively reduce the carbon footprint of our software.
 
 ---
 
@@ -23,16 +22,22 @@ pip install eco-code-analyzer[dev]
 
 ## ✨ **Features**
 
-- ♻️ Analyzes Python code for ecological impact
-- 📊 Provides an overall eco-score and a detailed breakdown
-- 💡 Offers improvement suggestions with examples and environmental impact estimates
-- 🔍 Analyzes entire projects or individual files
+- ♻️ Analyzes Python code for ecological impact with research-based rules
+- 📊 Provides an overall eco-score and a detailed breakdown across multiple categories
+- 💡 Offers improvement suggestions with examples, references, and environmental impact estimates
+- 🔍 Analyzes entire projects or individual files with context-aware analysis
 - 🌱 Estimates potential energy savings and CO2 reduction
 - 🌍 Calculates project carbon footprint
 - ⏳ Analyzes Git history to track eco-score over time
 - 📈 Generates visualizations of eco-score trends
-- ⚙️ Supports custom configuration and rules
+- ⚙️ Supports custom configuration and rules with an extensible rule system
 - 🌳 Allows users to contribute to tree planting based on analysis results
+- 🔬 Provides detailed analysis across five key categories:
+  - **Energy Efficiency**: Loop constructs, lazy evaluation, redundant computations
+  - **Resource Usage**: Memory management, context managers, data structures
+  - **I/O Efficiency**: File, network, and database operations
+  - **Algorithm Efficiency**: Time/space complexity, data structure selection
+  - **Custom Rules**: Extensible framework for project-specific rules
 
 ---
 
@@ -43,7 +48,7 @@ pip install eco-code-analyzer[dev]
 ```python
 from eco_code_analyzer import analyze_code, get_eco_score, get_improvement_suggestions, estimate_energy_savings
 
-code = """ 
+code = """
 def example_function():
     result = []
     for i in range(100):
@@ -51,7 +56,10 @@ def example_function():
     return result
 """
 
-analysis_result = analyze_code(code)
+# Analyze code with optional file path and configuration
+analysis_result = analyze_code(code, file_path="example.py", config={
+    "thresholds": {"category_score": 0.6}
+})
 eco_score = get_eco_score(analysis_result)
 suggestions = get_improvement_suggestions(analysis_result)
 energy_savings = estimate_energy_savings({'overall_score': eco_score})
@@ -149,9 +157,10 @@ Here's an example configuration file:
 ```json
 {
   "weights": {
-    "energy_efficiency": 0.4,
-    "resource_usage": 0.3,
-    "code_optimizations": 0.2,
+    "energy_efficiency": 0.25,
+    "resource_usage": 0.25,
+    "io_efficiency": 0.2,
+    "algorithm_efficiency": 0.2,
     "custom_rules": 0.1
   },
   "thresholds": {
@@ -165,7 +174,7 @@ Here's an example configuration file:
     }
   ],
   "coefficients": {
-    "energy_consumption_per_cpu_cycle": 1e-9,
+    "energy_consumption_per_cpu_cycle": 1.2e-9,
     "co2_emissions_per_kwh": 0.5,
     "base_energy_consumption_per_year": 100,
     "base_co2_emissions_per_year": 50,
@@ -176,7 +185,12 @@ Here's an example configuration file:
 
 In this configuration:
 
-- `weights`: Adjust the importance of different categories in the overall eco-score.
+- `weights`: Adjust the importance of different categories in the overall eco-score:
+  - `energy_efficiency`: Efficiency of code execution and CPU usage
+  - `resource_usage`: Memory and resource management
+  - `io_efficiency`: File, network, and database operations
+  - `algorithm_efficiency`: Time and space complexity of algorithms
+  - `custom_rules`: User-defined rules for specific needs
 - `thresholds`: Set the levels at which warnings or suggestions are triggered.
 - `custom_rules`: Add your own rules or adjust the weight of existing ones.
 - `coefficients`: Configure the key assumptions used in environmental impact calculations:
@@ -190,6 +204,50 @@ By adjusting these coefficients, you can tailor the analysis to better match you
 
 ---
 
+## 🧠 **Enhanced Rules System**
+
+Version 0.4.0 introduces a completely redesigned rules system with:
+
+- **Research-Based Rules**: Each rule includes references to academic research and best practices
+- **Context-Aware Analysis**: The analyzer maintains context between rule checks for more accurate results
+- **Pattern Detection Engine**: Sophisticated pattern matching for complex code structures
+- **Extensible Architecture**: Easily add new rules and categories
+- **Detailed Suggestions**: More specific and actionable recommendations
+
+### Rule Categories
+
+1. **Energy Efficiency**
+
+   - Loop optimization (list comprehensions, generator expressions)
+   - Lazy evaluation techniques
+   - Redundant computation detection
+   - Nested loop analysis
+
+2. **Resource Usage**
+
+   - Memory management and leak detection
+   - Context manager usage
+   - Efficient data structure selection
+   - Global variable usage
+
+3. **I/O Efficiency**
+
+   - File operation optimization
+   - Network request batching
+   - Database query efficiency (N+1 query detection)
+   - Caching strategies
+   - Bulk operation usage
+
+4. **Algorithm Efficiency**
+
+   - Time complexity analysis
+   - Space complexity analysis
+   - Data structure selection
+   - Recursive algorithm optimization
+
+5. **Custom Rules**
+   - Extensible framework for project-specific rules
+
 ## 🤝 **Contributing**
 
 Contributions are welcome! Please feel free to submit a Pull Request. Here are some ways you can contribute:
@@ -201,6 +259,9 @@ Contributions are welcome! Please feel free to submit a Pull Request. Here are s
 5. Improve documentation and provide usage examples
 6. Refine the assumptions and coefficients used in the analysis
 7. Expand the tree planting contribution feature with more options and partnerships
+8. Add more research references to existing rules
+9. Implement new rule categories
+10. Improve the pattern detection engine
 
 ---
 
