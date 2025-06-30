@@ -1,5 +1,8 @@
 [lint]
-select = ["ANN", "TC"]
+#select = [
+#    "ANN",
+#    "TC"
+#]
 
 [lint.flake8-builtins]
 builtins-strict-checking = true

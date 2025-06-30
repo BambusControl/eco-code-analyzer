@@ -1,5 +1,10 @@
 import ast
-from typing import Callable
+from typing import Callable, TypedDict
+
+
+class EnvironmentalImpact(TypedDict):
+    energy_consumption: float
+    co2_emissions: float
 
 def check_loop_efficiency(node: ast.AST) -> float:
     if isinstance(node, ast.For):
@@ -125,15 +130,15 @@ def estimate_co2_emissions(energy_consumption: float) -> float:
     """
     return energy_consumption * CO2_EMISSIONS_PER_KWH
 
-def get_environmental_impact(node: ast.AST) -> dict[str, float]:
+def get_environmental_impact(node: ast.AST) -> EnvironmentalImpact:
     """
     Get the estimated environmental impact of a given AST node.
     """
     energy_consumption = estimate_energy_consumption(node)
     co2_emissions = estimate_co2_emissions(energy_consumption)
-    return {
-        'energy_consumption': energy_consumption,
-        'co2_emissions': co2_emissions
-    }
+    return EnvironmentalImpact(
+        energy_consumption = energy_consumption,
+        co2_emissions = co2_emissions
+    )
 
 # Add more sophisticated rules and environmental impact assessments as needed

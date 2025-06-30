@@ -3,8 +3,11 @@ Base classes for the rule system.
 """
 
 import ast
-from typing import Dict, Any, List, Optional, Type
 from dataclasses import dataclass, field
+from typing import Dict, List, Optional, Type
+
+from eco_code_analyzer.data import Suggestion, AppConfig
+from eco_code_analyzer.rules.context import AnalysisContext
 
 
 @dataclass
@@ -22,26 +25,27 @@ class Rule:
     """Base class for all eco-code rules."""
     metadata: RuleMetadata
 
-    def __init__(self, config: Dict[str, Any] = None):
+    def __init__(self, config: AppConfig = None) -> None:
         self.config = config or {}
 
-    def check(self, node: ast.AST, context: Dict[str, Any]) -> float:
+    def check(self, node: ast.AST, context: AnalysisContext) -> float:
         """
         Check if the rule applies to this node.
         Returns a score multiplier (< 1.0 for penalties, > 1.0 for rewards).
         """
         raise NotImplementedError("Rule subclasses must implement check method")
 
-    def get_suggestion(self) -> Dict[str, str]:
+    def get_suggestion(self) -> Suggestion:
         """Get improvement suggestion for this rule."""
-        return {
-            "category": self.metadata.category,
-            "suggestion": self.metadata.description,
-            "impact": self.metadata.impact,
-            "example": next(iter(self.metadata.examples.values())) if self.metadata.examples else "",
-            "environmental_impact": "Reduces energy consumption and carbon footprint.",
-            "references": ", ".join(self.metadata.references) if self.metadata.references else ""
-        }
+        return Suggestion(
+            name=self.metadata.name,
+            description=self.metadata.description,
+            category=self.metadata.category,
+            impact=self.metadata.impact,
+            example=next(iter(self.metadata.examples.values())) if self.metadata.examples else "",
+            environmental_impact="Reduces energy consumption and carbon footprint.",
+            references=", ".join(self.metadata.references) if self.metadata.references else ""
+        )
 
 
 class RuleRegistry:
@@ -49,7 +53,7 @@ class RuleRegistry:
     _rules: Dict[str, Dict[str, Type[Rule]]] = {}
 
     @classmethod
-    def register(cls, rule_class: Type[Rule]):
+    def register(cls, rule_class: Type[Rule]) -> Type[Rule]:
         """Register a rule class."""
         category = rule_class.metadata.category
         if category not in cls._rules:
@@ -65,7 +69,7 @@ class RuleRegistry:
         return {name: rule for category in cls._rules.values() for name, rule in category.items()}
 
     @classmethod
-    def create_rule_instances(cls, config: Dict[str, Any]) -> Dict[str, Dict[str, Rule]]:
+    def create_rule_instances(cls, config: AppConfig) -> Dict[str, Dict[str, Rule]]:
         """Create instances of all registered rules with the given config."""
         instances = {}
         for category, rules in cls._rules.items():

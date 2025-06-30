@@ -9,7 +9,7 @@ from typing import Dict, Set, List, Optional
 class AnalysisContext:
     """Context for code analysis, maintaining state between rule checks."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.scope_stack: List[ast.AST] = []  # Track current scope (function, class, module)
         self.variable_types: Dict[str, str] = {}  # Track variable types when possible
         self.imported_modules: Set[str] = set()  # Track imported modules
@@ -19,11 +19,11 @@ class AnalysisContext:
         self.file_path: Optional[str] = None  # Current file being analyzed
         self.code_lines: List[str] = []  # Lines of code being analyzed
 
-    def enter_scope(self, node: ast.AST):
+    def enter_scope(self, node: ast.AST) -> None:
         """Enter a new scope (function, class, etc.)."""
         self.scope_stack.append(node)
 
-    def exit_scope(self):
+    def exit_scope(self) -> None:
         """Exit the current scope."""
         if self.scope_stack:
             self.scope_stack.pop()
@@ -32,7 +32,7 @@ class AnalysisContext:
         """Get the current scope node."""
         return self.scope_stack[-1] if self.scope_stack else None
 
-    def record_variable_type(self, name: str, type_hint: str):
+    def record_variable_type(self, name: str, type_hint: str) -> None:
         """Record a variable's type."""
         self.variable_types[name] = type_hint
 
@@ -40,7 +40,7 @@ class AnalysisContext:
         """Get a variable's type if known."""
         return self.variable_types.get(name)
 
-    def record_import(self, module_name: str):
+    def record_import(self, module_name: str) -> None:
         """Record an imported module."""
         self.imported_modules.add(module_name)
 
@@ -48,7 +48,7 @@ class AnalysisContext:
         """Check if a module has been imported."""
         return module_name in self.imported_modules
 
-    def record_function_call(self, func_name: str):
+    def record_function_call(self, func_name: str) -> None:
         """Record a function call."""
         self.function_calls[func_name] = self.function_calls.get(func_name, 0) + 1
 
@@ -56,7 +56,7 @@ class AnalysisContext:
         """Get the number of times a function has been called."""
         return self.function_calls.get(func_name, 0)
 
-    def enter_loop(self, node: ast.AST):
+    def enter_loop(self, node: ast.AST) -> None:
         """Enter a loop, tracking nesting depth."""
         node_id = id(node)
         parent_depth = 0
@@ -69,7 +69,7 @@ class AnalysisContext:
         """Get the nesting depth of a loop."""
         return self.loop_depths.get(id(node), 0)
 
-    def cache_node_energy(self, node: ast.AST, energy: float):
+    def cache_node_energy(self, node: ast.AST, energy: float) -> None:
         """Cache the energy estimate for a node."""
         self.node_energy[id(node)] = energy
 
@@ -77,11 +77,11 @@ class AnalysisContext:
         """Get the cached energy estimate for a node if available."""
         return self.node_energy.get(id(node))
 
-    def set_file_path(self, file_path: str):
+    def set_file_path(self, file_path: str) -> None:
         """Set the current file being analyzed."""
         self.file_path = file_path
 
-    def set_code_lines(self, code: str):
+    def set_code_lines(self, code: str) -> None:
         """Set the lines of code being analyzed."""
         self.code_lines = code.splitlines()
 
@@ -98,6 +98,6 @@ class AnalysisContext:
 
         return "\n".join(self.code_lines[start_line:end_line])
 
-    def reset(self):
+    def reset(self) -> None:
         """Reset the context for a new analysis."""
         self.__init__()

@@ -1,8 +1,9 @@
 import argparse
-import sys
-import os
-import webbrowser
 import logging
+import os
+import sys
+import webbrowser
+
 from .analyzer import (
     analyze_code,
     analyze_project,
@@ -18,7 +19,8 @@ from .analyzer import (
     estimate_energy_savings
 )
 
-def contribute_to_tree_planting(trees_equivalent):
+
+def contribute_to_tree_planting(trees_equivalent: float) -> None:
     """
     Open a web page for the user to contribute to tree planting based on the analysis results.
     """
@@ -39,7 +41,7 @@ def contribute_to_tree_planting(trees_equivalent):
     else:
         print("No problem. Remember, every small action counts towards a sustainable future!")
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(description="Analyze Python code for ecological impact.")
     parser.add_argument("path", help="Python file or project directory to analyze")
     parser.add_argument("-v", "--verbose", action="store_true", help="Display detailed analysis")
@@ -92,12 +94,13 @@ def main():
         if suggestions:
             print("\nImprovement Suggestions:")
             for suggestion in suggestions:
-                print(f"- {suggestion['category']}: {suggestion['suggestion']}")
+                print(f"- {suggestion['category']}: {suggestion['name']}")
+                print(f"  {suggestion['description']}")
                 print(f"  Impact: {suggestion['impact']}")
                 print(f"  Example: {suggestion['example']}")
                 print(f"  Environmental Impact: {suggestion['environmental_impact']}")
 
-        energy_savings = estimate_energy_savings({'overall_score': eco_score})
+        energy_savings = estimate_energy_savings(eco_score)
         print("\nEstimated Environmental Impact:")
         print(f"Potential Energy Savings: {energy_savings['energy_kwh_per_year']:.2f} kWh/year")
         print(f"Potential CO2 Reduction: {energy_savings['co2_kg_per_year']:.2f} kg CO2/year")
@@ -115,14 +118,14 @@ def main():
 
         if args.verbose:
             print("\nFile Scores:")
-            for file, result in project_results.items():
+            for file, result in project_results["file_results"].items():
                 if file != 'overall_score':
                     print(f"{file}: {get_eco_score(result):.2f}")
 
         carbon_footprint = calculate_project_carbon_footprint(project_results)
         print(f"\nEstimated Project Carbon Footprint: {carbon_footprint:.2f} kg CO2/year")
 
-        energy_savings = estimate_energy_savings(project_results)
+        energy_savings = estimate_energy_savings(project_results["overall_score"])
         print("\nEstimated Environmental Impact if Optimized:")
         print(f"Potential Energy Savings: {energy_savings['energy_kwh_per_year']:.2f} kWh/year")
         print(f"Potential CO2 Reduction: {energy_savings['co2_kg_per_year']:.2f} kg CO2/year")

@@ -3,6 +3,7 @@ Energy efficiency rules for eco-code-analyzer.
 """
 
 import ast
+
 from .base import Rule, RuleMetadata, RuleRegistry
 from .context import AnalysisContext
 from .patterns import PatternDetector
