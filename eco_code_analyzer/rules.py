@@ -1,5 +1,5 @@
 import ast
-from typing import Any, Callable
+from typing import Callable
 
 def check_loop_efficiency(node: ast.AST) -> float:
     if isinstance(node, ast.For):

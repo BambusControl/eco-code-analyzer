@@ -3,7 +3,7 @@ Base classes for the rule system.
 """
 
 import ast
-from typing import Dict, Any, List, Callable, Optional, Type
+from typing import Dict, Any, List, Optional, Type
 from dataclasses import dataclass, field
 
 

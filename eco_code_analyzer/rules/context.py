@@ -3,7 +3,7 @@ Context for code analysis, maintaining state between rule checks.
 """
 
 import ast
-from typing import Dict, Set, List, Optional, Any
+from typing import Dict, Set, List, Optional
 
 
 class AnalysisContext:

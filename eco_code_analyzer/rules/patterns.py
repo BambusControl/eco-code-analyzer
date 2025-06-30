@@ -3,7 +3,6 @@ Pattern detection utilities for identifying common code patterns.
 """
 
 import ast
-from typing import Optional, List, Set, Dict, Any
 from .context import AnalysisContext
 
 

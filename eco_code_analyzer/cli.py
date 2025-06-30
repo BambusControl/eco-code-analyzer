@@ -1,7 +1,6 @@
 import argparse
 import sys
 import os
-import json
 import webbrowser
 import logging
 from .analyzer import (
