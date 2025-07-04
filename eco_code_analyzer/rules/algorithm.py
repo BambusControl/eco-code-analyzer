@@ -21,7 +21,7 @@ class TimeComplexityRule(Rule):
             "https://doi.org/10.1145/3136014.3136031",
             "Energy Complexity of Algorithms - Journal of ACM"
         ],
-        examples={
+        examples= {
             "inefficient": """
                 # Bubble sort: O(n²) time complexity
                 def bubble_sort(arr):

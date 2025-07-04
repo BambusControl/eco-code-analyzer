@@ -97,7 +97,8 @@ def main() -> None:
                 print(f"- {suggestion['category']}: {suggestion['name']}")
                 print(f"  {suggestion['description']}")
                 print(f"  Impact: {suggestion['impact']}")
-                print(f"  Example: {suggestion['example']}")
+                print(f"  Example: {suggestion['example_bad']}")
+                print(f"  Solution: {suggestion['example_good']}")
                 print(f"  Environmental Impact: {suggestion['environmental_impact']}")
 
         energy_savings = estimate_energy_savings(eco_score)

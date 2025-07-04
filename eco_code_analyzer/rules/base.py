@@ -8,6 +8,7 @@ from typing import Dict, List, Optional, Type
 
 from eco_code_analyzer.data import Suggestion, AppConfig
 from eco_code_analyzer.rules.context import AnalysisContext
+from eco_code_analyzer.rules.rule_example import RuleExample
 
 
 @dataclass
@@ -18,7 +19,7 @@ class RuleMetadata:
     category: str
     impact: str  # "high", "medium", "low"
     references: List[str] = field(default_factory=list)  # Research papers or articles supporting this rule
-    examples: Dict[str, str] = field(default_factory=dict)  # Good/bad examples
+    examples: Optional[RuleExample] = None # Good/bad examples
 
 
 class Rule:
@@ -42,7 +43,8 @@ class Rule:
             description=self.metadata.description,
             category=self.metadata.category,
             impact=self.metadata.impact,
-            example=next(iter(self.metadata.examples.values())) if self.metadata.examples else "",
+            example_good=self.metadata.examples["efficient"] if self.metadata.examples else "",
+            example_bad=self.metadata.examples["inefficient"] if self.metadata.examples else "",
             environmental_impact="Reduces energy consumption and carbon footprint.",
             references=", ".join(self.metadata.references) if self.metadata.references else ""
         )
