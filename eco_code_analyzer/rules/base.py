@@ -21,8 +21,8 @@ class RuleMetadata:
         "energy_efficiency", "memory_usage", "io_efficiency", "algorithm_efficiency"
     ]
     impact: Literal["high", "medium", "low"]
-    references: set[str] = field(
-        default_factory=set
+    references: list[str] = field(
+        default_factory=list
     )  # Research papers or articles supporting this rule
     examples: RuleExample | None = None  # Good/bad examples
 
@@ -56,8 +56,7 @@ class Rule:
             )
             if self.metadata.examples
             else None,
-            environmental_impact="Reduces energy consumption and carbon footprint.",
-            references=self.metadata.references if self.metadata.references else "",
+            references=set(self.metadata.references) if self.metadata.references else {},
         )
 
 
