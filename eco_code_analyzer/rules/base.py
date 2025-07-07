@@ -17,7 +17,9 @@ class RuleMetadata:
 
     name: str
     description: str
-    category: str
+    category: Literal[
+        "energy_efficiency", "memory_usage", "io_efficiency", "algorithm_efficiency"
+    ]
     impact: Literal["high", "medium", "low"]
     references: set[str] = field(
         default_factory=set
