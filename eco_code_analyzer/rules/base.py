@@ -55,9 +55,7 @@ class Rule:
             if self.metadata.examples
             else None,
             environmental_impact="Reduces energy consumption and carbon footprint.",
-            references=self.metadata.references
-            if self.metadata.references
-            else "",
+            references=self.metadata.references if self.metadata.references else "",
         )
 
 
