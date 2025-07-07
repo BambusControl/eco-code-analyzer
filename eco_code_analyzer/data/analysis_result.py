@@ -1,7 +1,7 @@
-from typing import TypedDict
+from typing import NamedTuple
 
 
-class AnalysisResult(TypedDict):
+class AnalysisResult(NamedTuple):
     energy_efficiency: float
     resource_usage: float
     io_efficiency: float
