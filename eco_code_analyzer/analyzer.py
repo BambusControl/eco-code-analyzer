@@ -112,7 +112,7 @@ def get_eco_score(analysis_result: AnalysisResult) -> float:
     Calculate an overall eco-score based on the analysis result.
 
     Args:
-        analysis_result: Dictionary with category scores
+        analysis_result: NamedTuple with category scores
 
     Returns:
         Overall eco-score between 0 and 1
@@ -125,12 +125,7 @@ def get_eco_score(analysis_result: AnalysisResult) -> float:
         custom_rules=0.1,
     )
 
-    # Ensure all categories exist in the result
-    for key in weights:
-        if key not in analysis_result:
-            analysis_result[key] = 1.0
-
-    score = sum(analysis_result[key] * weights[key] for key in weights)
+    score = sum(getattr(analysis_result, key) * weights[key] for key in weights)
     return round(score, 2)
 
 
@@ -205,7 +200,7 @@ def get_improvement_suggestions(
     Generate improvement suggestions based on the analysis result.
 
     Args:
-        analysis_result: Dictionary with category scores
+        analysis_result: NamedTuple with category scores
         config: Optional configuration dictionary
 
     Returns:
@@ -230,10 +225,7 @@ def get_improvement_suggestions(
     }
 
     for category_key in categories:
-        if (
-            category_key in analysis_result
-            and analysis_result[category_key] < threshold
-        ):
+        if getattr(analysis_result, category_key) < threshold:
             # Get rules for this category
             category_rules = {}
             for cat, rules in rule_instances.items():
@@ -255,13 +247,13 @@ def get_detailed_analysis(analysis_result: AnalysisResult) -> str:
     Generate a detailed analysis report as a string.
 
     Args:
-        analysis_result: Dictionary with category scores
+        analysis_result: NamedTuple with category scores
 
     Returns:
         Formatted string with detailed analysis
     """
     details = [
-        f"Energy Efficiency: {analysis_result.get('energy_efficiency', 0):.2f}",
+        f"Energy Efficiency: {analysis_result.energy_efficiency:.2f}",
         "- Evaluates the use of efficient loop constructs, list comprehensions, and generator expressions.",
         "- Checks for lazy evaluation techniques and redundant computations.",
         "- Analyzes loop nesting and complexity.",
@@ -270,15 +262,15 @@ def get_detailed_analysis(analysis_result: AnalysisResult) -> str:
     # Energy Efficiency
     impact = (
         "High"
-        if analysis_result.get("energy_efficiency", 0) >= 0.8
+        if analysis_result.energy_efficiency >= 0.8
         else "Medium"
-        if analysis_result.get("energy_efficiency", 0) >= 0.6
+        if analysis_result.energy_efficiency >= 0.6
         else "Low"
     )
     details.append(f"Environmental Impact: {impact}")
 
     # Resource Usage
-    details.append(f"\nResource Usage: {analysis_result.get('resource_usage', 0):.2f}")
+    details.append(f"\nResource Usage: {analysis_result.resource_usage:.2f}")
     details.append("- Analyzes memory usage and resource management practices.")
     details.append(
         "- Evaluates the use of context managers and efficient data structures."
@@ -286,15 +278,15 @@ def get_detailed_analysis(analysis_result: AnalysisResult) -> str:
     details.append("- Checks for potential memory leaks and global variable usage.")
     impact = (
         "High"
-        if analysis_result.get("resource_usage", 0) >= 0.8
+        if analysis_result.resource_usage >= 0.8
         else "Medium"
-        if analysis_result.get("resource_usage", 0) >= 0.6
+        if analysis_result.resource_usage >= 0.6
         else "Low"
     )
     details.append(f"Environmental Impact: {impact}")
 
     # I/O Efficiency
-    details.append(f"\nI/O Efficiency: {analysis_result.get('io_efficiency', 0):.2f}")
+    details.append(f"\nI/O Efficiency: {analysis_result.io_efficiency:.2f}")
     details.append("- Examines file, network, and database operations.")
     details.append("- Checks for efficient use of caching and bulk operations.")
     details.append(
@@ -302,16 +294,16 @@ def get_detailed_analysis(analysis_result: AnalysisResult) -> str:
     )
     impact = (
         "High"
-        if analysis_result.get("io_efficiency", 0) >= 0.8
+        if analysis_result.io_efficiency >= 0.8
         else "Medium"
-        if analysis_result.get("io_efficiency", 0) >= 0.6
+        if analysis_result.io_efficiency >= 0.6
         else "Low"
     )
     details.append(f"Environmental Impact: {impact}")
 
     # Algorithm Efficiency
     details.append(
-        f"\nAlgorithm Efficiency: {analysis_result.get('algorithm_efficiency', 0):.2f}"
+        f"\nAlgorithm Efficiency: {analysis_result.algorithm_efficiency:.2f}"
     )
     details.append("- Analyzes time and space complexity of algorithms.")
     details.append("- Evaluates data structure selection for operations.")
@@ -320,23 +312,23 @@ def get_detailed_analysis(analysis_result: AnalysisResult) -> str:
     )
     impact = (
         "High"
-        if analysis_result.get("algorithm_efficiency", 0) >= 0.8
+        if analysis_result.algorithm_efficiency >= 0.8
         else "Medium"
-        if analysis_result.get("algorithm_efficiency", 0) >= 0.6
+        if analysis_result.algorithm_efficiency >= 0.6
         else "Low"
     )
     details.append(f"Environmental Impact: {impact}")
 
     # Custom Rules
-    details.append(f"\nCustom Rules: {analysis_result.get('custom_rules', 0):.2f}")
+    details.append(f"\nCustom Rules: {analysis_result.custom_rules:.2f}")
     details.append(
         "- Applies user-defined custom rules for project-specific optimizations."
     )
     impact = (
         "High"
-        if analysis_result.get("custom_rules", 0) >= 0.8
+        if analysis_result.custom_rules >= 0.8
         else "Medium"
-        if analysis_result.get("custom_rules", 0) >= 0.6
+        if analysis_result.custom_rules >= 0.6
         else "Low"
     )
     details.append(f"Environmental Impact: {impact}")

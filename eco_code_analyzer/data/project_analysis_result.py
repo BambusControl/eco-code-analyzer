@@ -1,8 +1,8 @@
-from typing import TypedDict, Dict
+from typing import NamedTuple, Dict
 
 from eco_code_analyzer.data.analysis_result import AnalysisResult
 
 
-class ProjectAnalysisResult(TypedDict):
+class ProjectAnalysisResult(NamedTuple):
     file_results: Dict[str, AnalysisResult]
     overall_score: float
