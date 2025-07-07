@@ -35,17 +35,7 @@ def analyze_code(
     Returns:
         Dictionary with category scores
     """
-    try:
-        tree = ast.parse(code)
-    except SyntaxError as e:
-        logger.error(f"Syntax error in code: {e}")
-        return {
-            "energy_efficiency": 0.0,
-            "resource_usage": 0.0,
-            "io_efficiency": 0.0,
-            "algorithm_efficiency": 0.0,
-            "custom_rules": 0.0,
-        }
+    tree = ast.parse(code)
 
     # Create analysis context
     context = AnalysisContext()
