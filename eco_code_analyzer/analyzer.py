@@ -133,7 +133,7 @@ def get_project_eco_score(project_results: ProjectAnalysisResult) -> float:
     """
     Calculate an overall eco-score for the entire project.
     """
-    return project_results["overall_score"]
+    return project_results.overall_score
 
 
 def analyze_category(
@@ -344,15 +344,15 @@ def generate_report(project_results: ProjectAnalysisResult, output_file: str) ->
         "project_score": get_project_eco_score(project_results),
         "file_scores": {
             file: get_eco_score(result)
-            for file, result in project_results["file_results"].items()
+            for file, result in project_results.file_results.items()
         },
-        "detailed_results": project_results["file_results"],
+        "detailed_results": project_results.file_results,
         "improvement_suggestions": {
             file: get_improvement_suggestions(result)
-            for file, result in project_results["file_results"].items()
+            for file, result in project_results.file_results.items()
         },
         "estimated_energy_savings": estimate_energy_savings(
-            project_results["overall_score"]
+            project_results.overall_score
         ),
     }
 
@@ -387,7 +387,7 @@ def analyze_with_git_history(
     for commit in commits:
         repo.git.checkout(commit.hexsha)
         project_results = analyze_project(repo_path)
-        score = project_results["overall_score"]
+        score = project_results.overall_score
         scores.append((commit.hexsha[:7], score))
 
     repo.git.checkout("master")
