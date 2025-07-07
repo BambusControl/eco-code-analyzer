@@ -7,16 +7,10 @@ from .analyzer import (
     get_detailed_analysis,
     generate_report,
     estimate_energy_savings,
-    calculate_project_carbon_footprint
+    calculate_project_carbon_footprint,
 )
 
 # Export the rule system
-from .rules import (
-    Rule,
-    RuleMetadata,
-    RuleRegistry,
-    AnalysisContext,
-    PatternDetector
-)
+from .rules import Rule, RuleMetadata, RuleRegistry, AnalysisContext, PatternDetector
 
 __version__ = "0.4.0"  # Updated version with enhanced rules module

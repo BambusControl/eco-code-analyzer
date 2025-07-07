@@ -4,16 +4,26 @@ import logging
 import os
 from typing import Dict, List, Tuple
 
-from .data import AnalysisResult, EstimatedEnergySavings, ProjectAnalysisResult, Suggestion, AppConfig
+from .data import (
+    AnalysisResult,
+    EstimatedEnergySavings,
+    ProjectAnalysisResult,
+    Suggestion,
+    AppConfig,
+)
 from .data.app_config import Weights
 from .rules import Rule, RuleRegistry, AnalysisContext
 
 # Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
 logger = logging.getLogger(__name__)
 
 
-def analyze_code(code: str, file_path: str = None, config: AppConfig = None) -> AnalysisResult:
+def analyze_code(
+    code: str, file_path: str = None, config: AppConfig = None
+) -> AnalysisResult:
     """
     Analyze the given Python code for ecological impact.
 
@@ -30,11 +40,11 @@ def analyze_code(code: str, file_path: str = None, config: AppConfig = None) -> 
     except SyntaxError as e:
         logger.error(f"Syntax error in code: {e}")
         return {
-            'energy_efficiency': 0.0,
-            'resource_usage': 0.0,
-            'io_efficiency': 0.0,
-            'algorithm_efficiency': 0.0,
-            'custom_rules': 0.0,
+            "energy_efficiency": 0.0,
+            "resource_usage": 0.0,
+            "io_efficiency": 0.0,
+            "algorithm_efficiency": 0.0,
+            "custom_rules": 0.0,
         }
 
     # Create analysis context
@@ -48,14 +58,25 @@ def analyze_code(code: str, file_path: str = None, config: AppConfig = None) -> 
 
     # Analyze code with each category of rules
     return AnalysisResult(
-        energy_efficiency=analyze_category(tree, context, rule_instances.get('energy_efficiency', {})),
-        resource_usage=analyze_category(tree, context, rule_instances.get('memory_usage', {})),
-        io_efficiency=analyze_category(tree, context, rule_instances.get('io_efficiency', {})),
-        algorithm_efficiency=analyze_category(tree, context, rule_instances.get('algorithm_efficiency', {})),
+        energy_efficiency=analyze_category(
+            tree, context, rule_instances.get("energy_efficiency", {})
+        ),
+        resource_usage=analyze_category(
+            tree, context, rule_instances.get("memory_usage", {})
+        ),
+        io_efficiency=analyze_category(
+            tree, context, rule_instances.get("io_efficiency", {})
+        ),
+        algorithm_efficiency=analyze_category(
+            tree, context, rule_instances.get("algorithm_efficiency", {})
+        ),
         custom_rules=analyze_custom_rules(tree, context, rule_instances),
     )
 
-def analyze_project(project_path: str, config: AppConfig = None) -> ProjectAnalysisResult:
+
+def analyze_project(
+    project_path: str, config: AppConfig = None
+) -> ProjectAnalysisResult:
     """
     Analyze all Python files in the given project directory.
 
@@ -74,10 +95,10 @@ def analyze_project(project_path: str, config: AppConfig = None) -> ProjectAnaly
 
     for root, _, files in os.walk(project_path):
         for file in files:
-            if file.endswith('.py'):
+            if file.endswith(".py"):
                 file_path = str(os.path.join(root, file))
                 try:
-                    with open(file_path, 'r', encoding='utf-8') as f:
+                    with open(file_path, "r", encoding="utf-8") as f:
                         code = f.read()
 
                     logger.info(f"Analyzing file: {file_path}")
@@ -91,7 +112,9 @@ def analyze_project(project_path: str, config: AppConfig = None) -> ProjectAnaly
                     logger.error(f"Error analyzing {file_path}: {e}")
 
     overall_score = total_score / total_lines if total_lines > 0 else 0
-    return ProjectAnalysisResult(file_results=file_analysis_results, overall_score=overall_score)
+    return ProjectAnalysisResult(
+        file_results=file_analysis_results, overall_score=overall_score
+    )
 
 
 def get_eco_score(analysis_result: AnalysisResult) -> float:
@@ -125,10 +148,12 @@ def get_project_eco_score(project_results: ProjectAnalysisResult) -> float:
     """
     Calculate an overall eco-score for the entire project.
     """
-    return project_results['overall_score']
+    return project_results["overall_score"]
 
 
-def analyze_category(tree: ast.AST, context: AnalysisContext, rules: Dict[str, Rule]) -> float:
+def analyze_category(
+    tree: ast.AST, context: AnalysisContext, rules: Dict[str, Rule]
+) -> float:
     """
     Analyze code with a specific category of rules.
 
@@ -154,7 +179,9 @@ def analyze_category(tree: ast.AST, context: AnalysisContext, rules: Dict[str, R
     return round(score, 2)
 
 
-def analyze_custom_rules(tree: ast.AST, context: AnalysisContext, rule_instances: Dict[str, Dict[str, Rule]]) -> float:
+def analyze_custom_rules(
+    tree: ast.AST, context: AnalysisContext, rule_instances: Dict[str, Dict[str, Rule]]
+) -> float:
     """
     Apply custom rules that don't fit into standard categories.
 
@@ -166,7 +193,7 @@ def analyze_custom_rules(tree: ast.AST, context: AnalysisContext, rule_instances
     Returns:
         Custom rules score between 0 and 1
     """
-    custom_rules = rule_instances.get('custom_rules', {})
+    custom_rules = rule_instances.get("custom_rules", {})
     if not custom_rules:
         return 1.0
 
@@ -181,7 +208,9 @@ def analyze_custom_rules(tree: ast.AST, context: AnalysisContext, rule_instances
     return round(score, 2)
 
 
-def get_improvement_suggestions(analysis_result: AnalysisResult, config: AppConfig = None) -> List[Suggestion]:
+def get_improvement_suggestions(
+    analysis_result: AnalysisResult, config: AppConfig = None
+) -> List[Suggestion]:
     """
     Generate improvement suggestions based on the analysis result.
 
@@ -195,27 +224,32 @@ def get_improvement_suggestions(analysis_result: AnalysisResult, config: AppConf
     suggestions: List[Suggestion] = []
     threshold = 0.7  # Default threshold for suggestions
 
-    if config and 'thresholds' in config:
-        threshold = config['thresholds'].get('category_score', 0.7)
+    if config and "thresholds" in config:
+        threshold = config["thresholds"].get("category_score", 0.7)
 
     # Create rule instances to get their suggestions
     rule_instances = RuleRegistry.create_rule_instances(config or {})
 
     # Get suggestions for each category
     categories = {
-        'energy_efficiency',
-        'resource_usage',
-        'io_efficiency',
-        'algorithm_efficiency',
-        'custom_rules',
+        "energy_efficiency",
+        "resource_usage",
+        "io_efficiency",
+        "algorithm_efficiency",
+        "custom_rules",
     }
 
     for category_key in categories:
-        if category_key in analysis_result and analysis_result[category_key] < threshold:
+        if (
+            category_key in analysis_result
+            and analysis_result[category_key] < threshold
+        ):
             # Get rules for this category
             category_rules = {}
             for cat, rules in rule_instances.items():
-                if cat.lower().replace('_', '') == category_key.lower().replace('_', ''):
+                if cat.lower().replace("_", "") == category_key.lower().replace(
+                    "_", ""
+                ):
                     category_rules = rules
                     break
 
@@ -236,73 +270,111 @@ def get_detailed_analysis(analysis_result: AnalysisResult) -> str:
     Returns:
         Formatted string with detailed analysis
     """
-    details = [f"Energy Efficiency: {analysis_result.get('energy_efficiency', 0):.2f}",
-               "- Evaluates the use of efficient loop constructs, list comprehensions, and generator expressions.",
-               "- Checks for lazy evaluation techniques and redundant computations.",
-               "- Analyzes loop nesting and complexity."]
+    details = [
+        f"Energy Efficiency: {analysis_result.get('energy_efficiency', 0):.2f}",
+        "- Evaluates the use of efficient loop constructs, list comprehensions, and generator expressions.",
+        "- Checks for lazy evaluation techniques and redundant computations.",
+        "- Analyzes loop nesting and complexity.",
+    ]
 
     # Energy Efficiency
-    impact = 'High' if analysis_result.get('energy_efficiency', 0) >= 0.8 else 'Medium' if analysis_result.get(
-        'energy_efficiency', 0) >= 0.6 else 'Low'
+    impact = (
+        "High"
+        if analysis_result.get("energy_efficiency", 0) >= 0.8
+        else "Medium"
+        if analysis_result.get("energy_efficiency", 0) >= 0.6
+        else "Low"
+    )
     details.append(f"Environmental Impact: {impact}")
 
     # Resource Usage
     details.append(f"\nResource Usage: {analysis_result.get('resource_usage', 0):.2f}")
     details.append("- Analyzes memory usage and resource management practices.")
-    details.append("- Evaluates the use of context managers and efficient data structures.")
+    details.append(
+        "- Evaluates the use of context managers and efficient data structures."
+    )
     details.append("- Checks for potential memory leaks and global variable usage.")
-    impact = 'High' if analysis_result.get('resource_usage', 0) >= 0.8 else 'Medium' if analysis_result.get(
-        'resource_usage', 0) >= 0.6 else 'Low'
+    impact = (
+        "High"
+        if analysis_result.get("resource_usage", 0) >= 0.8
+        else "Medium"
+        if analysis_result.get("resource_usage", 0) >= 0.6
+        else "Low"
+    )
     details.append(f"Environmental Impact: {impact}")
 
     # I/O Efficiency
     details.append(f"\nI/O Efficiency: {analysis_result.get('io_efficiency', 0):.2f}")
     details.append("- Examines file, network, and database operations.")
     details.append("- Checks for efficient use of caching and bulk operations.")
-    details.append("- Identifies potential N+1 query problems and repeated I/O operations.")
-    impact = 'High' if analysis_result.get('io_efficiency', 0) >= 0.8 else 'Medium' if analysis_result.get(
-        'io_efficiency', 0) >= 0.6 else 'Low'
+    details.append(
+        "- Identifies potential N+1 query problems and repeated I/O operations."
+    )
+    impact = (
+        "High"
+        if analysis_result.get("io_efficiency", 0) >= 0.8
+        else "Medium"
+        if analysis_result.get("io_efficiency", 0) >= 0.6
+        else "Low"
+    )
     details.append(f"Environmental Impact: {impact}")
 
     # Algorithm Efficiency
-    details.append(f"\nAlgorithm Efficiency: {analysis_result.get('algorithm_efficiency', 0):.2f}")
+    details.append(
+        f"\nAlgorithm Efficiency: {analysis_result.get('algorithm_efficiency', 0):.2f}"
+    )
     details.append("- Analyzes time and space complexity of algorithms.")
     details.append("- Evaluates data structure selection for operations.")
-    details.append("- Checks for optimized recursive algorithms and appropriate algorithm selection.")
-    impact = 'High' if analysis_result.get('algorithm_efficiency', 0) >= 0.8 else 'Medium' if analysis_result.get(
-        'algorithm_efficiency', 0) >= 0.6 else 'Low'
+    details.append(
+        "- Checks for optimized recursive algorithms and appropriate algorithm selection."
+    )
+    impact = (
+        "High"
+        if analysis_result.get("algorithm_efficiency", 0) >= 0.8
+        else "Medium"
+        if analysis_result.get("algorithm_efficiency", 0) >= 0.6
+        else "Low"
+    )
     details.append(f"Environmental Impact: {impact}")
 
     # Custom Rules
     details.append(f"\nCustom Rules: {analysis_result.get('custom_rules', 0):.2f}")
-    details.append("- Applies user-defined custom rules for project-specific optimizations.")
-    impact = 'High' if analysis_result.get('custom_rules', 0) >= 0.8 else 'Medium' if analysis_result.get(
-        'custom_rules', 0) >= 0.6 else 'Low'
+    details.append(
+        "- Applies user-defined custom rules for project-specific optimizations."
+    )
+    impact = (
+        "High"
+        if analysis_result.get("custom_rules", 0) >= 0.8
+        else "Medium"
+        if analysis_result.get("custom_rules", 0) >= 0.6
+        else "Low"
+    )
     details.append(f"Environmental Impact: {impact}")
 
     return "\n".join(details)
+
 
 def generate_report(project_results: ProjectAnalysisResult, output_file: str) -> None:
     """
     Generate a detailed report of the project analysis.
     """
     report = {
-        'project_score': get_project_eco_score(project_results),
-        'file_scores': {
+        "project_score": get_project_eco_score(project_results),
+        "file_scores": {
             file: get_eco_score(result)
-            for file, result
-            in project_results['file_results'].items()
+            for file, result in project_results["file_results"].items()
         },
-        'detailed_results': project_results['file_results'],
-        'improvement_suggestions': {
+        "detailed_results": project_results["file_results"],
+        "improvement_suggestions": {
             file: get_improvement_suggestions(result)
-            for file, result
-            in project_results['file_results'].items()
+            for file, result in project_results["file_results"].items()
         },
-        'estimated_energy_savings': estimate_energy_savings(project_results["overall_score"]),
+        "estimated_energy_savings": estimate_energy_savings(
+            project_results["overall_score"]
+        ),
     }
 
-    with open(output_file, 'w') as f:
+    with open(output_file, "w") as f:
         json.dump(report, f, indent=2)
 
 
@@ -310,11 +382,13 @@ def load_config(config_file: str) -> AppConfig:
     """
     Load configuration from a JSON file.
     """
-    with open(config_file, 'r') as f:
+    with open(config_file, "r") as f:
         return json.load(f)
 
 
-def analyze_with_git_history(repo_path: str, num_commits: int = 5) -> List[Tuple[str, float]]:
+def analyze_with_git_history(
+    repo_path: str, num_commits: int = 5
+) -> List[Tuple[str, float]]:
     """
     Analyze the eco-score of the project over the last n commits.
     """
@@ -325,16 +399,16 @@ def analyze_with_git_history(repo_path: str, num_commits: int = 5) -> List[Tuple
         return []
 
     repo = Repo(repo_path)
-    commits = list(repo.iter_commits('master', max_count=num_commits))
+    commits = list(repo.iter_commits("master", max_count=num_commits))
 
     scores = []
     for commit in commits:
         repo.git.checkout(commit.hexsha)
         project_results = analyze_project(repo_path)
-        score = project_results['overall_score']
+        score = project_results["overall_score"]
         scores.append((commit.hexsha[:7], score))
 
-    repo.git.checkout('master')
+    repo.git.checkout("master")
     return scores
 
 
@@ -346,15 +420,20 @@ def estimate_energy_savings(overall_eco_score: float) -> EstimatedEnergySavings:
 
     # These are rough estimates and should be refined with more accurate data
     estimated_savings = EstimatedEnergySavings(
-        energy_kwh_per_year = potential_improvement * 100,  # Assuming 100 kWh/year for a typical project
-        co2_kg_per_year = potential_improvement * 50,  # Assuming 50 kg CO2/year for a typical project
-        trees_equivalent = potential_improvement * 2,  # Assuming 2 trees can offset the CO2 of a typical project
+        energy_kwh_per_year=potential_improvement
+        * 100,  # Assuming 100 kWh/year for a typical project
+        co2_kg_per_year=potential_improvement
+        * 50,  # Assuming 50 kg CO2/year for a typical project
+        trees_equivalent=potential_improvement
+        * 2,  # Assuming 2 trees can offset the CO2 of a typical project
     )
 
     return estimated_savings
 
 
-def visualize_eco_score_trend(scores: List[Tuple[str, float]], output_file: str) -> None:
+def visualize_eco_score_trend(
+    scores: List[Tuple[str, float]], output_file: str
+) -> None:
     """
     Generate a visualization of the eco-score trend over time.
     """
@@ -366,10 +445,10 @@ def visualize_eco_score_trend(scores: List[Tuple[str, float]], output_file: str)
 
     commits, eco_scores = zip(*scores)
     plt.figure(figsize=(10, 6))
-    plt.plot(commits, eco_scores, marker='o')
-    plt.title('Eco-Score Trend Over Time')
-    plt.xlabel('Commits')
-    plt.ylabel('Eco-Score')
+    plt.plot(commits, eco_scores, marker="o")
+    plt.title("Eco-Score Trend Over Time")
+    plt.xlabel("Commits")
+    plt.ylabel("Eco-Score")
     plt.xticks(rotation=45)
     plt.tight_layout()
     plt.savefig(output_file)
@@ -380,7 +459,7 @@ def calculate_project_carbon_footprint(project_results: ProjectAnalysisResult) -
     """
     Calculate an estimated carbon footprint for the project based on its eco-score.
     """
-    overall_score = project_results['overall_score']
+    overall_score = project_results["overall_score"]
     # This is a simplified model and should be refined with more accurate data
     base_footprint = 100  # kg CO2 per year for a typical project
     return base_footprint * (1 - overall_score)

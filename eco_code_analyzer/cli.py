@@ -16,7 +16,7 @@ from .analyzer import (
     analyze_with_git_history,
     visualize_eco_score_trend,
     calculate_project_carbon_footprint,
-    estimate_energy_savings
+    estimate_energy_savings,
 )
 
 
@@ -27,35 +27,64 @@ def contribute_to_tree_planting(trees_equivalent: float) -> None:
     trees_to_plant = round(trees_equivalent)
     donation_amount = trees_to_plant * 1  # Assuming $1 per tree
 
-    print(f"\nBased on the analysis, you can offset your code's environmental impact by planting {trees_to_plant} trees.")
+    print(
+        f"\nBased on the analysis, you can offset your code's environmental impact by planting {trees_to_plant} trees."
+    )
     print(f"This would cost approximately ${donation_amount}.")
 
-    contribute = input("Would you like to contribute to planting these trees? (yes/no): ").lower()
+    contribute = input(
+        "Would you like to contribute to planting these trees? (yes/no): "
+    ).lower()
 
-    if contribute == 'yes':
+    if contribute == "yes":
         # You can replace this URL with a real tree-planting organization's donation page
-        donation_url = f"https://onetreeplanted.org/products/plant-trees?quantity={trees_to_plant}"
+        donation_url = (
+            f"https://onetreeplanted.org/products/plant-trees?quantity={trees_to_plant}"
+        )
         print(f"Opening donation page to plant {trees_to_plant} trees...")
         webbrowser.open(donation_url)
         print("Thank you for your contribution to a greener environment!")
     else:
-        print("No problem. Remember, every small action counts towards a sustainable future!")
+        print(
+            "No problem. Remember, every small action counts towards a sustainable future!"
+        )
+
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Analyze Python code for ecological impact.")
+    parser = argparse.ArgumentParser(
+        description="Analyze Python code for ecological impact."
+    )
     parser.add_argument("path", help="Python file or project directory to analyze")
-    parser.add_argument("-v", "--verbose", action="store_true", help="Display detailed analysis")
+    parser.add_argument(
+        "-v", "--verbose", action="store_true", help="Display detailed analysis"
+    )
     parser.add_argument("-c", "--config", help="Path to configuration file")
     parser.add_argument("-o", "--output", help="Output file for the report")
     parser.add_argument("-g", "--git", action="store_true", help="Analyze Git history")
-    parser.add_argument("-n", "--num-commits", type=int, default=5, help="Number of commits to analyze (default: 5)")
-    parser.add_argument("--visualize", action="store_true", help="Generate visualization of eco-score trend")
-    parser.add_argument("--contribute", action="store_true", help="Contribute to tree planting based on analysis results")
+    parser.add_argument(
+        "-n",
+        "--num-commits",
+        type=int,
+        default=5,
+        help="Number of commits to analyze (default: 5)",
+    )
+    parser.add_argument(
+        "--visualize",
+        action="store_true",
+        help="Generate visualization of eco-score trend",
+    )
+    parser.add_argument(
+        "--contribute",
+        action="store_true",
+        help="Contribute to tree planting based on analysis results",
+    )
     args = parser.parse_args()
 
     # Configure logging
     log_level = logging.DEBUG if args.verbose else logging.INFO
-    logging.basicConfig(level=log_level, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    logging.basicConfig(
+        level=log_level, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    )
     logger = logging.getLogger(__name__)
 
     # Load configuration
@@ -70,7 +99,7 @@ def main() -> None:
 
     if os.path.isfile(args.path):
         try:
-            with open(args.path, 'r', encoding='utf-8') as file:
+            with open(args.path, "r", encoding="utf-8") as file:
                 code = file.read()
             logger.info(f"Analyzing file: {args.path}")
             analysis_result = analyze_code(code, args.path, config)
@@ -103,12 +132,16 @@ def main() -> None:
 
         energy_savings = estimate_energy_savings(eco_score)
         print("\nEstimated Environmental Impact:")
-        print(f"Potential Energy Savings: {energy_savings['energy_kwh_per_year']:.2f} kWh/year")
-        print(f"Potential CO2 Reduction: {energy_savings['co2_kg_per_year']:.2f} kg CO2/year")
+        print(
+            f"Potential Energy Savings: {energy_savings['energy_kwh_per_year']:.2f} kWh/year"
+        )
+        print(
+            f"Potential CO2 Reduction: {energy_savings['co2_kg_per_year']:.2f} kg CO2/year"
+        )
         print(f"Equivalent to planting: {energy_savings['trees_equivalent']:.2f} trees")
 
         if args.contribute:
-            contribute_to_tree_planting(energy_savings['trees_equivalent'])
+            contribute_to_tree_planting(energy_savings["trees_equivalent"])
 
     elif os.path.isdir(args.path):
         logger.info(f"Analyzing project directory: {args.path}")
@@ -120,20 +153,26 @@ def main() -> None:
         if args.verbose:
             print("\nFile Scores:")
             for file, result in project_results["file_results"].items():
-                if file != 'overall_score':
+                if file != "overall_score":
                     print(f"{file}: {get_eco_score(result):.2f}")
 
         carbon_footprint = calculate_project_carbon_footprint(project_results)
-        print(f"\nEstimated Project Carbon Footprint: {carbon_footprint:.2f} kg CO2/year")
+        print(
+            f"\nEstimated Project Carbon Footprint: {carbon_footprint:.2f} kg CO2/year"
+        )
 
         energy_savings = estimate_energy_savings(project_results["overall_score"])
         print("\nEstimated Environmental Impact if Optimized:")
-        print(f"Potential Energy Savings: {energy_savings['energy_kwh_per_year']:.2f} kWh/year")
-        print(f"Potential CO2 Reduction: {energy_savings['co2_kg_per_year']:.2f} kg CO2/year")
+        print(
+            f"Potential Energy Savings: {energy_savings['energy_kwh_per_year']:.2f} kWh/year"
+        )
+        print(
+            f"Potential CO2 Reduction: {energy_savings['co2_kg_per_year']:.2f} kg CO2/year"
+        )
         print(f"Equivalent to planting: {energy_savings['trees_equivalent']:.2f} trees")
 
         if args.contribute:
-            contribute_to_tree_planting(energy_savings['trees_equivalent'])
+            contribute_to_tree_planting(energy_savings["trees_equivalent"])
 
         if args.output:
             generate_report(project_results, args.output)
@@ -154,9 +193,16 @@ def main() -> None:
         print(f"Error: {args.path} is not a valid file or directory")
         sys.exit(1)
 
-    print("\nTo see a more detailed analysis, run the command with the -v or --verbose flag.")
-    print("Remember, writing eco-friendly code not only improves performance but also reduces your carbon footprint!")
-    print("You can contribute to tree planting based on the analysis results by using the --contribute flag.")
+    print(
+        "\nTo see a more detailed analysis, run the command with the -v or --verbose flag."
+    )
+    print(
+        "Remember, writing eco-friendly code not only improves performance but also reduces your carbon footprint!"
+    )
+    print(
+        "You can contribute to tree planting based on the analysis results by using the --contribute flag."
+    )
+
 
 if __name__ == "__main__":
     main()

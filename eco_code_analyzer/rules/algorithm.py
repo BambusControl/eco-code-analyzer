@@ -19,9 +19,9 @@ class TimeComplexityRule(Rule):
         impact="high",
         references=[
             "https://doi.org/10.1145/3136014.3136031",
-            "Energy Complexity of Algorithms - Journal of ACM"
+            "Energy Complexity of Algorithms - Journal of ACM",
         ],
-        examples= {
+        examples={
             "inefficient": """
                 # Bubble sort: O(n²) time complexity
                 def bubble_sort(arr):
@@ -35,14 +35,14 @@ class TimeComplexityRule(Rule):
                 # Using built-in sort: O(n log n) time complexity
                 def efficient_sort(arr):
                     return sorted(arr)
-            """
-        }
+            """,
+        },
     )
 
     def check(self, node: ast.AST, context: AnalysisContext) -> float:
         # Reward use of efficient sorting
         if isinstance(node, ast.Call) and isinstance(node.func, ast.Name):
-            if node.func.id == 'sorted':
+            if node.func.id == "sorted":
                 return 1.2
 
         # Penalize nested loops that might indicate quadratic algorithms
@@ -73,7 +73,7 @@ class SpaceComplexityRule(Rule):
         impact="medium",
         references=[
             "https://doi.org/10.1145/3136014.3136031",
-            "Memory-Efficient Algorithms - SIAM Journal on Computing"
+            "Memory-Efficient Algorithms - SIAM Journal on Computing",
         ],
         examples={
             "inefficient": """
@@ -91,8 +91,8 @@ class SpaceComplexityRule(Rule):
                     result1 = process_first(data)
                     result2 = process_second(data)
                     return result1, result2
-            """
-        }
+            """,
+        },
     )
 
     def check(self, node: ast.AST, context: AnalysisContext) -> float:
@@ -101,7 +101,7 @@ class SpaceComplexityRule(Rule):
             copy_calls = []
             for stmt in ast.walk(node):
                 if isinstance(stmt, ast.Call) and isinstance(stmt.func, ast.Attribute):
-                    if stmt.func.attr == 'copy':
+                    if stmt.func.attr == "copy":
                         copy_calls.append(stmt)
 
             if len(copy_calls) > 1:
@@ -129,7 +129,7 @@ class AlgorithmSelectionRule(Rule):
         impact="high",
         references=[
             "https://doi.org/10.1145/3136014.3136031",
-            "Energy-Aware Algorithm Selection - IEEE Transactions"
+            "Energy-Aware Algorithm Selection - IEEE Transactions",
         ],
         examples={
             "inefficient": """
@@ -142,14 +142,14 @@ class AlgorithmSelectionRule(Rule):
                 # Using a simpler algorithm for the same task
                 def find_max(numbers):
                     return max(numbers)  # O(n)
-            """
-        }
+            """,
+        },
     )
 
     def check(self, node: ast.AST, context: AnalysisContext) -> float:
         # Reward use of appropriate built-in functions
         if isinstance(node, ast.Call) and isinstance(node.func, ast.Name):
-            if node.func.id in ['max', 'min', 'sum', 'any', 'all']:
+            if node.func.id in ["max", "min", "sum", "any", "all"]:
                 return 1.2
 
         # Penalize potentially inefficient algorithm selections
@@ -161,13 +161,23 @@ class AlgorithmSelectionRule(Rule):
             min_max_access = []
 
             for stmt in ast.walk(node):
-                if isinstance(stmt, ast.Call) and isinstance(stmt.func, (ast.Name, ast.Attribute)):
-                    func_name = stmt.func.id if isinstance(stmt.func, ast.Name) else stmt.func.attr
-                    if func_name in ['sort', 'sorted']:
+                if isinstance(stmt, ast.Call) and isinstance(
+                    stmt.func, (ast.Name, ast.Attribute)
+                ):
+                    func_name = (
+                        stmt.func.id
+                        if isinstance(stmt.func, ast.Name)
+                        else stmt.func.attr
+                    )
+                    if func_name in ["sort", "sorted"]:
                         sorts.append(stmt)
 
-                if isinstance(stmt, ast.Subscript) and isinstance(stmt.slice, ast.UnaryOp):
-                    if isinstance(stmt.slice.op, ast.USub) and isinstance(stmt.slice.operand, ast.Constant):
+                if isinstance(stmt, ast.Subscript) and isinstance(
+                    stmt.slice, ast.UnaryOp
+                ):
+                    if isinstance(stmt.slice.op, ast.USub) and isinstance(
+                        stmt.slice.operand, ast.Constant
+                    ):
                         if stmt.slice.operand.value == 1:
                             # This is accessing the first or last element (e.g., arr[-1])
                             min_max_access.append(stmt)
@@ -190,7 +200,7 @@ class DataStructureSelectionRule(Rule):
         impact="medium",
         references=[
             "https://doi.org/10.1145/3136014.3136031",
-            "Energy-Efficient Data Structures - ACM Computing Surveys"
+            "Energy-Efficient Data Structures - ACM Computing Surveys",
         ],
         examples={
             "inefficient": """
@@ -209,8 +219,8 @@ class DataStructureSelectionRule(Rule):
 
                 def get_value(key):
                     return data.get(key)  # O(1) lookup
-            """
-        }
+            """,
+        },
     )
 
     def check(self, node: ast.AST, context: AnalysisContext) -> float:
@@ -223,9 +233,11 @@ class DataStructureSelectionRule(Rule):
 
             # Look for equality comparisons in the loop body
             for stmt in ast.walk(node):
-                if isinstance(stmt, ast.Compare) and any(isinstance(op, ast.Eq) for op in stmt.ops):
+                if isinstance(stmt, ast.Compare) and any(
+                    isinstance(op, ast.Eq) for op in stmt.ops
+                ):
                     # This might be a linear search
-                    if var_type == 'list':
+                    if var_type == "list":
                         return 0.7
 
         # Reward use of appropriate data structures
@@ -233,7 +245,7 @@ class DataStructureSelectionRule(Rule):
             return 1.1
 
         if isinstance(node, ast.Call) and isinstance(node.func, ast.Name):
-            if node.func.id in ['defaultdict', 'Counter', 'deque', 'OrderedDict']:
+            if node.func.id in ["defaultdict", "Counter", "deque", "OrderedDict"]:
                 # These are specialized data structures that are often more efficient
                 return 1.2
 
@@ -251,7 +263,7 @@ class RecursionOptimizationRule(Rule):
         impact="high",
         references=[
             "https://doi.org/10.1145/3136014.3136031",
-            "Energy-Efficient Recursive Algorithms - SIAM Journal"
+            "Energy-Efficient Recursive Algorithms - SIAM Journal",
         ],
         examples={
             "inefficient": """
@@ -271,8 +283,8 @@ class RecursionOptimizationRule(Rule):
                         return n
                     memo[n] = fibonacci(n-1) + fibonacci(n-2)
                     return memo[n]
-            """
-        }
+            """,
+        },
     )
 
     def check(self, node: ast.AST, context: AnalysisContext) -> float:

@@ -1,12 +1,19 @@
-from typing import TypedDict
+from typing import NamedTuple
+
 
 # TODO add a line number of the problem
-class Suggestion(TypedDict):
+
+
+class Example(NamedTuple):
+    inefficient: str
+    efficient: str
+
+
+class Suggestion(NamedTuple):
     name: str
     description: str
     category: str
     impact: str
-    example_bad: str
-    example_good: str
+    example: Example
     environmental_impact: str
     references: str

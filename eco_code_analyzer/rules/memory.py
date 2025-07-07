@@ -19,7 +19,7 @@ class ContextManagerRule(Rule):
         impact="high",
         references=[
             "https://doi.org/10.1145/3136014.3136031",
-            "Resource Management in Python - PyCon 2019"
+            "Resource Management in Python - PyCon 2019",
         ],
         examples={
             "inefficient": """
@@ -31,8 +31,8 @@ class ContextManagerRule(Rule):
                 with open('file.txt', 'r') as f:
                     data = f.read()
                 # File is automatically closed, even if an exception occurs
-            """
-        }
+            """,
+        },
     )
 
     def check(self, node: ast.AST, context: AnalysisContext) -> float:
@@ -44,7 +44,11 @@ class ContextManagerRule(Rule):
             return 1.2
 
         # Penalize open() without with
-        if isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and node.func.id == 'open':
+        if (
+            isinstance(node, ast.Call)
+            and isinstance(node.func, ast.Name)
+            and node.func.id == "open"
+        ):
             # Check if this open() call is not inside a with statement
             current_scope = context.current_scope()
             if current_scope and not isinstance(current_scope, ast.With):
@@ -64,7 +68,7 @@ class GlobalVariableRule(Rule):
         impact="medium",
         references=[
             "https://doi.org/10.1145/3136014.3136031",
-            "Memory Management in Python - PyCon 2020"
+            "Memory Management in Python - PyCon 2020",
         ],
         examples={
             "inefficient": """
@@ -77,8 +81,8 @@ class GlobalVariableRule(Rule):
                 def process_data(data, key, value):
                     data[key] = value  # Explicit parameter passing
                     return data
-            """
-        }
+            """,
+        },
     )
 
     def check(self, node: ast.AST, context: AnalysisContext) -> float:
@@ -104,7 +108,7 @@ class MemoryEfficientDataStructureRule(Rule):
         impact="medium",
         references=[
             "https://doi.org/10.1145/3136014.3136031",
-            "Memory Efficient Python - Raymond Hettinger"
+            "Memory Efficient Python - Raymond Hettinger",
         ],
         examples={
             "inefficient": """
@@ -118,8 +122,8 @@ class MemoryEfficientDataStructureRule(Rule):
                 items = {1, 2, 3, 4, 5}
                 if x in items:  # O(1) operation
                     print("Found")
-            """
-        }
+            """,
+        },
     )
 
     def check(self, node: ast.AST, context: AnalysisContext) -> float:
@@ -128,13 +132,15 @@ class MemoryEfficientDataStructureRule(Rule):
             return 1.2
 
         # Penalize inefficient membership testing
-        if isinstance(node, ast.Compare) and any(isinstance(op, ast.In) for op in node.ops):
+        if isinstance(node, ast.Compare) and any(
+            isinstance(op, ast.In) for op in node.ops
+        ):
             # Check if we're testing membership in a list
             comparator = node.comparators[0]
             if isinstance(comparator, ast.Name):
                 var_name = comparator.id
                 var_type = context.get_variable_type(var_name)
-                if var_type == 'list':
+                if var_type == "list":
                     return 0.8
 
         return 1.0
@@ -151,7 +157,7 @@ class MemoryLeakRule(Rule):
         impact="high",
         references=[
             "https://doi.org/10.1145/3136014.3136031",
-            "Tracking Down Memory Leaks in Python - PyCon 2018"
+            "Tracking Down Memory Leaks in Python - PyCon 2018",
         ],
         examples={
             "inefficient": """
@@ -173,8 +179,8 @@ class MemoryLeakRule(Rule):
                     def add_child(self, child):
                         self.children.append(child)
                         child.parent = weakref.ref(self)  # Use weak reference
-            """
-        }
+            """,
+        },
     )
 
     def check(self, node: ast.AST, context: AnalysisContext) -> float:
@@ -183,18 +189,22 @@ class MemoryLeakRule(Rule):
             # This is a simplified check - a more sophisticated version would
             # analyze the class structure more deeply
             for method in [n for n in node.body if isinstance(n, ast.FunctionDef)]:
-                if method.name == '__init__':
+                if method.name == "__init__":
                     # Look for assignments that might create circular references
                     for stmt in ast.walk(method):
-                        if isinstance(stmt, ast.Assign) and isinstance(stmt.targets[0], ast.Attribute):
-                            if stmt.targets[0].attr == 'parent' and isinstance(stmt.value, ast.Name):
+                        if isinstance(stmt, ast.Assign) and isinstance(
+                            stmt.targets[0], ast.Attribute
+                        ):
+                            if stmt.targets[0].attr == "parent" and isinstance(
+                                stmt.value, ast.Name
+                            ):
                                 # Potential circular reference
                                 return 0.8
 
         # Check for unclosed resources
         if isinstance(node, ast.Call):
             if isinstance(node.func, ast.Name):
-                if node.func.id in ['open', 'socket', 'connect']:
+                if node.func.id in ["open", "socket", "connect"]:
                     # Check if this call is not inside a with statement and not assigned to a variable
                     current_scope = context.current_scope()
                     if current_scope and not isinstance(current_scope, ast.With):
@@ -216,7 +226,7 @@ class LargeObjectLifetimeRule(Rule):
         impact="medium",
         references=[
             "https://doi.org/10.1145/3136014.3136031",
-            "Python Memory Management Best Practices - PyCon 2021"
+            "Python Memory Management Best Practices - PyCon 2021",
         ],
         examples={
             "inefficient": """
@@ -231,8 +241,8 @@ class LargeObjectLifetimeRule(Rule):
                     # Load only what's needed
                     data_item = load_specific_data(index)
                     return data_item
-            """
-        }
+            """,
+        },
     )
 
     def check(self, node: ast.AST, context: AnalysisContext) -> float:
@@ -243,10 +253,21 @@ class LargeObjectLifetimeRule(Rule):
         if isinstance(node, ast.Assign) and len(context.scope_stack) == 0:
             # Check if this is potentially a large data structure
             value = node.value
-            if isinstance(value, (ast.List, ast.Dict, ast.Set)) and len(getattr(value, 'elts', [])) > 10:
+            if (
+                isinstance(value, (ast.List, ast.Dict, ast.Set))
+                and len(getattr(value, "elts", [])) > 10
+            ):
                 return 0.8
             if isinstance(value, ast.Call) and isinstance(value.func, ast.Name):
-                if value.func.id in ['list', 'dict', 'set', 'array', 'DataFrame', 'load', 'read']:
+                if value.func.id in [
+                    "list",
+                    "dict",
+                    "set",
+                    "array",
+                    "DataFrame",
+                    "load",
+                    "read",
+                ]:
                     return 0.8
 
         return 1.0

@@ -1,5 +1,6 @@
 from typing import TypedDict
 
+
 class AnalysisResult(TypedDict):
     energy_efficiency: float
     resource_usage: float

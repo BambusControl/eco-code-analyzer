@@ -10,10 +10,14 @@ class AnalysisContext:
     """Context for code analysis, maintaining state between rule checks."""
 
     def __init__(self) -> None:
-        self.scope_stack: List[ast.AST] = []  # Track current scope (function, class, module)
+        self.scope_stack: List[
+            ast.AST
+        ] = []  # Track current scope (function, class, module)
         self.variable_types: Dict[str, str] = {}  # Track variable types when possible
         self.imported_modules: Set[str] = set()  # Track imported modules
-        self.function_calls: Dict[str, int] = {}  # Track function calls and their frequency
+        self.function_calls: Dict[
+            str, int
+        ] = {}  # Track function calls and their frequency
         self.loop_depths: Dict[int, int] = {}  # Track loop nesting depths
         self.node_energy: Dict[int, float] = {}  # Cache energy estimates for nodes
         self.file_path: Optional[str] = None  # Current file being analyzed
@@ -87,11 +91,11 @@ class AnalysisContext:
 
     def get_node_source(self, node: ast.AST) -> str:
         """Get the source code for a node."""
-        if not hasattr(node, 'lineno') or not hasattr(node, 'end_lineno'):
+        if not hasattr(node, "lineno") or not hasattr(node, "end_lineno"):
             return ""
 
-        start_line = getattr(node, 'lineno', 0) - 1  # 0-indexed
-        end_line = getattr(node, 'end_lineno', start_line + 1)
+        start_line = getattr(node, "lineno", 0) - 1  # 0-indexed
+        end_line = getattr(node, "end_lineno", start_line + 1)
 
         if not self.code_lines or start_line >= len(self.code_lines):
             return ""

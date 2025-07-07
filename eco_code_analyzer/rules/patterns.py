@@ -34,7 +34,7 @@ class PatternDetector:
         if not isinstance(call, ast.Call) or not isinstance(call.func, ast.Attribute):
             return False
 
-        if call.func.attr != 'append':
+        if call.func.attr != "append":
             return False
 
         # More sophisticated: check if the target is actually used in the append
@@ -78,7 +78,9 @@ class PatternDetector:
         return PatternDetector._is_simple_expression(arg)
 
     @staticmethod
-    def is_string_concatenation_in_loop(node: ast.For, context: AnalysisContext) -> bool:
+    def is_string_concatenation_in_loop(
+        node: ast.For, context: AnalysisContext
+    ) -> bool:
         """
         Detect if a for loop is concatenating strings inefficiently.
         Example:
@@ -96,7 +98,9 @@ class PatternDetector:
                     # Check if we're adding to a string
                     var_name = stmt.target.id
                     var_type = context.get_variable_type(var_name)
-                    if var_type == 'str' or PatternDetector._is_string_operation(stmt.value):
+                    if var_type == "str" or PatternDetector._is_string_operation(
+                        stmt.value
+                    ):
                         return True
         return False
 
@@ -121,7 +125,9 @@ class PatternDetector:
 
         # Look for membership tests on the same dictionaries
         for stmt in ast.walk(node):
-            if isinstance(stmt, ast.Compare) and any(isinstance(op, ast.In) for op in stmt.ops):
+            if isinstance(stmt, ast.Compare) and any(
+                isinstance(op, ast.In) for op in stmt.ops
+            ):
                 if isinstance(stmt.comparators[0], ast.Name):
                     dict_name = stmt.comparators[0].id
                     if dict_name in dict_lookups:
@@ -199,8 +205,9 @@ class PatternDetector:
             return True
 
         if isinstance(node, ast.BinOp):
-            return (PatternDetector._is_simple_expression(node.left) and
-                    PatternDetector._is_simple_expression(node.right))
+            return PatternDetector._is_simple_expression(
+                node.left
+            ) and PatternDetector._is_simple_expression(node.right)
 
         if isinstance(node, ast.UnaryOp):
             return PatternDetector._is_simple_expression(node.operand)
@@ -216,11 +223,16 @@ class PatternDetector:
         if isinstance(node, ast.Constant) and isinstance(node.value, str):
             return True
 
-        if isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and node.func.id == 'str':
+        if (
+            isinstance(node, ast.Call)
+            and isinstance(node.func, ast.Name)
+            and node.func.id == "str"
+        ):
             return True
 
         if isinstance(node, ast.BinOp) and isinstance(node.op, ast.Add):
-            return (PatternDetector._is_string_operation(node.left) or
-                    PatternDetector._is_string_operation(node.right))
+            return PatternDetector._is_string_operation(
+                node.left
+            ) or PatternDetector._is_string_operation(node.right)
 
         return False

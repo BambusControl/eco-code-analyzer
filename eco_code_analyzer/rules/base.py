@@ -4,9 +4,9 @@ Base classes for the rule system.
 
 import ast
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Type
+from typing import Dict, List, Optional, Type, Literal
 
-from eco_code_analyzer.data import Suggestion, AppConfig
+from eco_code_analyzer.data import Example, Suggestion, AppConfig
 from eco_code_analyzer.rules.context import AnalysisContext
 from eco_code_analyzer.rules.rule_example import RuleExample
 
@@ -14,16 +14,20 @@ from eco_code_analyzer.rules.rule_example import RuleExample
 @dataclass
 class RuleMetadata:
     """Metadata for a rule including description, impact, and references."""
+
     name: str
     description: str
     category: str
-    impact: str  # "high", "medium", "low"
-    references: List[str] = field(default_factory=list)  # Research papers or articles supporting this rule
-    examples: Optional[RuleExample] = None # Good/bad examples
+    impact: Literal["high", "medium", "low"]
+    references: set[str] = field(
+        default_factory=set
+    )  # Research papers or articles supporting this rule
+    examples: RuleExample | None = None  # Good/bad examples
 
 
 class Rule:
     """Base class for all eco-code rules."""
+
     metadata: RuleMetadata
 
     def __init__(self, config: AppConfig = None) -> None:
@@ -38,20 +42,37 @@ class Rule:
 
     def get_suggestion(self) -> Suggestion:
         """Get improvement suggestion for this rule."""
+
+        example = (
+            Example(
+                efficient=self.metadata.examples["efficient"],
+                inefficient=self.metadata.examples["inefficient"],
+            )
+            if self.metadata.examples
+            else None
+        )
+
         return Suggestion(
             name=self.metadata.name,
             description=self.metadata.description,
             category=self.metadata.category,
             impact=self.metadata.impact,
-            example_good=self.metadata.examples["efficient"] if self.metadata.examples else "",
-            example_bad=self.metadata.examples["inefficient"] if self.metadata.examples else "",
+            example=Example(
+                efficient=self.metadata.examples["efficient"],
+                inefficient=self.metadata.examples["inefficient"],
+            )
+            if self.metadata.examples
+            else None,
             environmental_impact="Reduces energy consumption and carbon footprint.",
-            references=", ".join(self.metadata.references) if self.metadata.references else ""
+            references=", ".join(self.metadata.references)
+            if self.metadata.references
+            else "",
         )
 
 
 class RuleRegistry:
     """Registry to manage all eco-code rules."""
+
     _rules: Dict[str, Dict[str, Type[Rule]]] = {}
 
     @classmethod
@@ -68,14 +89,20 @@ class RuleRegistry:
         """Get all rules or rules for a specific category."""
         if category:
             return cls._rules.get(category, {})
-        return {name: rule for category in cls._rules.values() for name, rule in category.items()}
+        return {
+            name: rule
+            for category in cls._rules.values()
+            for name, rule in category.items()
+        }
 
     @classmethod
     def create_rule_instances(cls, config: AppConfig) -> Dict[str, Dict[str, Rule]]:
         """Create instances of all registered rules with the given config."""
         instances = {}
         for category, rules in cls._rules.items():
-            instances[category] = {name: rule_class(config) for name, rule_class in rules.items()}
+            instances[category] = {
+                name: rule_class(config) for name, rule_class in rules.items()
+            }
         return instances
 
     @classmethod

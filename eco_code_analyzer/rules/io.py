@@ -20,7 +20,7 @@ class FileOperationRule(Rule):
         impact="high",
         references=[
             "https://doi.org/10.1145/3136014.3136031",
-            "Efficient I/O in Python - PyCon 2020"
+            "Efficient I/O in Python - PyCon 2020",
         ],
         examples={
             "inefficient": """
@@ -35,8 +35,8 @@ class FileOperationRule(Rule):
                     lines = f.readlines()
                 for i in range(100):
                     line = lines[i]
-            """
-        }
+            """,
+        },
     )
 
     def check(self, node: ast.AST, context: AnalysisContext) -> float:
@@ -45,14 +45,16 @@ class FileOperationRule(Rule):
             for stmt in ast.walk(node):
                 if isinstance(stmt, ast.With):
                     for item in stmt.items:
-                        if isinstance(item.context_expr, ast.Call) and isinstance(item.context_expr.func, ast.Name):
-                            if item.context_expr.func.id == 'open':
+                        if isinstance(item.context_expr, ast.Call) and isinstance(
+                            item.context_expr.func, ast.Name
+                        ):
+                            if item.context_expr.func.id == "open":
                                 # File is opened inside a loop
                                 return 0.6
 
         # Check for inefficient file reading
         if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute):
-            if node.func.attr == 'readlines' and isinstance(node.func.value, ast.Name):
+            if node.func.attr == "readlines" and isinstance(node.func.value, ast.Name):
                 # Check if we're only accessing a single line
                 parent = context.current_scope()
                 if parent and isinstance(parent, ast.With):
@@ -76,7 +78,7 @@ class NetworkOperationRule(Rule):
         impact="high",
         references=[
             "https://doi.org/10.1145/3136014.3136031",
-            "Green Networking - IEEE Communications Magazine"
+            "Green Networking - IEEE Communications Magazine",
         ],
         examples={
             "inefficient": """
@@ -91,8 +93,8 @@ class NetworkOperationRule(Rule):
                 ids_param = ','.join(ids)
                 response = requests.get(f'https://api.example.com/items?ids={ids_param}')
                 results = response.json()
-            """
-        }
+            """,
+        },
     )
 
     def check(self, node: ast.AST, context: AnalysisContext) -> float:
@@ -101,10 +103,15 @@ class NetworkOperationRule(Rule):
             for stmt in ast.walk(node):
                 if isinstance(stmt, ast.Call) and isinstance(stmt.func, ast.Attribute):
                     if isinstance(stmt.func.value, ast.Name):
-                        if stmt.func.value.id == 'requests' and stmt.func.attr in ['get', 'post', 'put', 'delete']:
+                        if stmt.func.value.id == "requests" and stmt.func.attr in [
+                            "get",
+                            "post",
+                            "put",
+                            "delete",
+                        ]:
                             # Network operation inside a loop
                             return 0.5
-                        if stmt.func.attr in ['urlopen', 'fetch', 'connect']:
+                        if stmt.func.attr in ["urlopen", "fetch", "connect"]:
                             # Potential network operation inside a loop
                             return 0.6
 
@@ -122,7 +129,7 @@ class DatabaseOperationRule(Rule):
         impact="high",
         references=[
             "https://doi.org/10.1145/3136014.3136031",
-            "Energy Efficiency in Database Systems - ACM SIGMOD"
+            "Energy Efficiency in Database Systems - ACM SIGMOD",
         ],
         examples={
             "inefficient": """
@@ -135,8 +142,8 @@ class DatabaseOperationRule(Rule):
             "efficient": """
                 # Single query with join
                 user_orders = db.query(User, Order).join(Order, User.id == Order.user_id).all()
-            """
-        }
+            """,
+        },
     )
 
     def check(self, node: ast.AST, context: AnalysisContext) -> float:
@@ -147,8 +154,10 @@ class DatabaseOperationRule(Rule):
             # Look for database query patterns in the loop body
             for stmt in ast.walk(node):
                 if isinstance(stmt, ast.Call) and isinstance(stmt.func, ast.Attribute):
-                    if stmt.func.attr in ['query', 'execute', 'filter', 'find', 'get']:
-                        if isinstance(stmt.func.value, ast.Name) or isinstance(stmt.func.value, ast.Attribute):
+                    if stmt.func.attr in ["query", "execute", "filter", "find", "get"]:
+                        if isinstance(stmt.func.value, ast.Name) or isinstance(
+                            stmt.func.value, ast.Attribute
+                        ):
                             # This looks like a database query
                             db_calls_in_loop.append(stmt)
 
@@ -175,7 +184,7 @@ class CachingRule(Rule):
         impact="medium",
         references=[
             "https://doi.org/10.1145/3136014.3136031",
-            "Caching Strategies for Energy-Efficient Computing - IEEE Transactions"
+            "Caching Strategies for Energy-Efficient Computing - IEEE Transactions",
         ],
         examples={
             "inefficient": """
@@ -192,18 +201,24 @@ class CachingRule(Rule):
                     result = fetch_from_remote_api(key)
                     cache[key] = result
                     return result
-            """
-        }
+            """,
+        },
     )
 
     def check(self, node: ast.AST, context: AnalysisContext) -> float:
         # Reward use of caching decorators
         if isinstance(node, ast.FunctionDef):
             for decorator in node.decorator_list:
-                if isinstance(decorator, ast.Name) and decorator.id in ['cache', 'lru_cache', 'cached_property']:
+                if isinstance(decorator, ast.Name) and decorator.id in [
+                    "cache",
+                    "lru_cache",
+                    "cached_property",
+                ]:
                     return 1.3
-                if isinstance(decorator, ast.Call) and isinstance(decorator.func, ast.Name):
-                    if decorator.func.id in ['cache', 'lru_cache']:
+                if isinstance(decorator, ast.Call) and isinstance(
+                    decorator.func, ast.Name
+                ):
+                    if decorator.func.id in ["cache", "lru_cache"]:
                         return 1.3
 
             # Check for manual caching patterns
@@ -211,7 +226,9 @@ class CachingRule(Rule):
             for stmt in node.body:
                 if isinstance(stmt, ast.If) and isinstance(stmt.test, ast.Compare):
                     if any(isinstance(op, ast.In) for op in stmt.test.ops):
-                        if isinstance(stmt.test.left, ast.Name) and isinstance(stmt.test.comparators[0], ast.Name):
+                        if isinstance(stmt.test.left, ast.Name) and isinstance(
+                            stmt.test.comparators[0], ast.Name
+                        ):
                             # This looks like "if key in cache:"
                             cache_var = stmt.test.comparators[0].id
                             return 1.2
@@ -230,7 +247,7 @@ class BulkOperationRule(Rule):
         impact="medium",
         references=[
             "https://doi.org/10.1145/3136014.3136031",
-            "Energy-Efficient Data Processing - ACM SIGMOD"
+            "Energy-Efficient Data Processing - ACM SIGMOD",
         ],
         examples={
             "inefficient": """
@@ -241,18 +258,23 @@ class BulkOperationRule(Rule):
             "efficient": """
                 # Bulk insert
                 db.executemany("INSERT INTO table VALUES (?)", [(item,) for item in items])
-            """
-        }
+            """,
+        },
     )
 
     def check(self, node: ast.AST, context: AnalysisContext) -> float:
         # Reward use of bulk operations
         if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute):
-            if node.func.attr in ['executemany', 'bulk_create', 'bulk_update', 'bulk_insert']:
+            if node.func.attr in [
+                "executemany",
+                "bulk_create",
+                "bulk_update",
+                "bulk_insert",
+            ]:
                 return 1.3
 
             # Penalize individual operations in loops
-            if isinstance(node.func.attr, str) and node.func.attr.startswith('execute'):
+            if isinstance(node.func.attr, str) and node.func.attr.startswith("execute"):
                 parent = context.current_scope()
                 if parent and isinstance(parent, ast.For):
                     return 0.7

@@ -20,7 +20,7 @@ class ListComprehensionRule(Rule):
         impact="medium",
         references=[
             "https://doi.org/10.1145/3136014.3136031",
-            "Green Algorithms: Quantifying the Carbon Footprint of Computation - Lannelongue et al."
+            "Green Algorithms: Quantifying the Carbon Footprint of Computation - Lannelongue et al.",
         ],
         examples={
             "inefficient": """
@@ -30,8 +30,8 @@ class ListComprehensionRule(Rule):
             """,
             "efficient": """
                 result = [item * 2 for item in items]
-            """
-        }
+            """,
+        },
     )
 
     def check(self, node: ast.AST, context: AnalysisContext) -> float:
@@ -60,7 +60,7 @@ class GeneratorExpressionRule(Rule):
         impact="medium",
         references=[
             "https://doi.org/10.1145/3136014.3136031",
-            "Energy Efficiency across Programming Languages - Pereira et al."
+            "Energy Efficiency across Programming Languages - Pereira et al.",
         ],
         examples={
             "inefficient": """
@@ -72,8 +72,8 @@ class GeneratorExpressionRule(Rule):
                 # Using a generator expression
                 for x in (f(y) for y in items):
                     print(x)
-            """
-        }
+            """,
+        },
     )
 
     def check(self, node: ast.AST, context: AnalysisContext) -> float:
@@ -100,7 +100,7 @@ class LazyEvaluationRule(Rule):
         impact="medium",
         references=[
             "https://doi.org/10.1145/3136014.3136031",
-            "Software Development Methodology in a Green IT Environment - Kern et al."
+            "Software Development Methodology in a Green IT Environment - Kern et al.",
         ],
         examples={
             "inefficient": """
@@ -112,14 +112,14 @@ class LazyEvaluationRule(Rule):
             """,
             "efficient": """
                 found = any(condition(item) for item in items)
-            """
-        }
+            """,
+        },
     )
 
     def check(self, node: ast.AST, context: AnalysisContext) -> float:
         # Reward use of any() and all()
         if isinstance(node, ast.Call) and isinstance(node.func, ast.Name):
-            if node.func.id in ('any', 'all') and len(node.args) == 1:
+            if node.func.id in ("any", "all") and len(node.args) == 1:
                 if isinstance(node.args[0], ast.GeneratorExp):
                     return 1.3
                 return 1.2
@@ -132,8 +132,11 @@ class LazyEvaluationRule(Rule):
                 if_node = node.body[0]
                 if len(if_node.body) == 1:
                     stmt = if_node.body[0]
-                    if (isinstance(stmt, ast.Return) and isinstance(stmt.value, ast.Constant) and
-                            isinstance(stmt.value.value, bool)):
+                    if (
+                        isinstance(stmt, ast.Return)
+                        and isinstance(stmt.value, ast.Constant)
+                        and isinstance(stmt.value.value, bool)
+                    ):
                         return 0.7
                     if isinstance(stmt, ast.Break):
                         # Look for a boolean assignment before or after the loop
@@ -153,7 +156,7 @@ class NestedLoopRule(Rule):
         impact="high",
         references=[
             "https://doi.org/10.1145/3136014.3136031",
-            "Energy Efficiency across Programming Languages - Pereira et al."
+            "Energy Efficiency across Programming Languages - Pereira et al.",
         ],
         examples={
             "inefficient": """
@@ -165,8 +168,8 @@ class NestedLoopRule(Rule):
             "efficient": """
                 # Use more efficient algorithms or data structures
                 # Or vectorized operations if possible
-            """
-        }
+            """,
+        },
     )
 
     def check(self, node: ast.AST, context: AnalysisContext) -> float:
@@ -198,7 +201,7 @@ class RedundantComputationRule(Rule):
         impact="medium",
         references=[
             "https://doi.org/10.1145/3136014.3136031",
-            "Energy-Efficient Software Development - Johann et al."
+            "Energy-Efficient Software Development - Johann et al.",
         ],
         examples={
             "inefficient": """
@@ -210,8 +213,8 @@ class RedundantComputationRule(Rule):
                 x = expensive_function()  # Computed once
                 for i in range(n):
                     result.append(i + x)
-            """
-        }
+            """,
+        },
     )
 
     def check(self, node: ast.AST, context: AnalysisContext) -> float:
