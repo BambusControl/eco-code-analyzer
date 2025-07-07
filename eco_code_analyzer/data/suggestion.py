@@ -12,8 +12,9 @@ class Example(NamedTuple):
 class Suggestion(NamedTuple):
     name: str
     description: str
-    category: str
+    category: Literal[
+        "energy_efficiency", "memory_usage", "io_efficiency", "algorithm_efficiency"
+    ]
     impact: Literal["high", "medium", "low"]
     example: Example
-    environmental_impact: str
     references: set[str]

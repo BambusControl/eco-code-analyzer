@@ -56,7 +56,9 @@ class Rule:
             )
             if self.metadata.examples
             else None,
-            references=set(self.metadata.references) if self.metadata.references else {},
+            references=set(self.metadata.references)
+            if self.metadata.references
+            else {},
         )
 
 
