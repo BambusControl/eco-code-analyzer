@@ -11,11 +11,9 @@ authors = [
 description = "A Python library that analyzes code for ecological impact and provides optimization suggestions with enhanced rule system"
 readme = "README.md"
 requires-python = ">=3.7"
-license = { file = "LICENSE" }
 keywords = ["code analysis", "environmental impact", "energy efficiency", "eco-friendly coding", "static analysis", "green computing"]
 classifiers = [
     "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Intended Audience :: Developers",
     "Topic :: Software Development :: Quality Assurance",
