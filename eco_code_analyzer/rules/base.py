@@ -43,15 +43,6 @@ class Rule:
     def get_suggestion(self) -> Suggestion:
         """Get improvement suggestion for this rule."""
 
-        example = (
-            Example(
-                efficient=self.metadata.examples["efficient"],
-                inefficient=self.metadata.examples["inefficient"],
-            )
-            if self.metadata.examples
-            else None
-        )
-
         return Suggestion(
             name=self.metadata.name,
             description=self.metadata.description,
