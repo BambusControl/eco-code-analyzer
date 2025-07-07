@@ -441,7 +441,7 @@ def calculate_project_carbon_footprint(project_results: ProjectAnalysisResult) -
     """
     Calculate an estimated carbon footprint for the project based on its eco-score.
     """
-    overall_score = project_results["overall_score"]
+    overall_score = project_results.overall_score
     # This is a simplified model and should be refined with more accurate data
     base_footprint = 100  # kg CO2 per year for a typical project
     return base_footprint * (1 - overall_score)
