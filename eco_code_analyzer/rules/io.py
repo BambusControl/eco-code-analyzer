@@ -3,8 +3,9 @@ I/O efficiency rules for eco-code-analyzer.
 """
 
 import ast
+from multipyline import multipyline
 
-from .base import Rule, RuleMetadata, RuleRegistry
+from .base import Rule, RuleMetadata, RuleRegistry, RuleExample
 from .context import AnalysisContext
 from .patterns import PatternDetector
 
@@ -23,19 +24,19 @@ class FileOperationRule(Rule):
             "Efficient I/O in Python - PyCon 2020",
         ],
         examples=RuleExample(
-            inefficient="""
+            inefficient=multipyline("""
                 # Reading a file line by line with multiple open/close
                 for i in range(100):
                     with open('large_file.txt', 'r') as f:
                         line = f.readlines()[i]  # Reads entire file each time
-            """,
-            efficient="""
+            """),
+            efficient=multipyline("""
                 # Reading a file once
                 with open('large_file.txt', 'r') as f:
                     lines = f.readlines()
                 for i in range(100):
                     line = lines[i]
-            """,
+            """),
         ),
     )
 
@@ -81,19 +82,19 @@ class NetworkOperationRule(Rule):
             "Green Networking - IEEE Communications Magazine",
         ],
         examples=RuleExample(
-            inefficient="""
+            inefficient=multipyline("""
                 # Making multiple API calls in a loop
                 results = []
                 for id in ids:
                     response = requests.get(f'https://api.example.com/items/{id}')
                     results.append(response.json())
-            """,
-            efficient="""
+            """),
+            efficient=multipyline("""
                 # Making a single batch API call
                 ids_param = ','.join(ids)
                 response = requests.get(f'https://api.example.com/items?ids={ids_param}')
                 results = response.json()
-            """,
+            """),
         ),
     )
 
@@ -132,17 +133,17 @@ class DatabaseOperationRule(Rule):
             "Energy Efficiency in Database Systems - ACM SIGMOD",
         ],
         examples=RuleExample(
-            inefficient="""
+            inefficient=multipyline("""
                 # N+1 query problem
                 users = db.query(User).all()
                 for user in users:
                     # This makes a separate query for each user
                     orders = db.query(Order).filter(Order.user_id == user.id).all()
-            """,
-            efficient="""
+            """),
+            efficient=multipyline("""
                 # Single query with join
                 user_orders = db.query(User, Order).join(Order, User.id == Order.user_id).all()
-            """,
+            """),
         ),
     )
 
@@ -187,13 +188,13 @@ class CachingRule(Rule):
             "Caching Strategies for Energy-Efficient Computing - IEEE Transactions",
         ],
         examples=RuleExample(
-            inefficient="""
+            inefficient=multipyline("""
                 def get_data(key):
                     # Expensive operation performed every time
                     result = fetch_from_remote_api(key)
                     return result
-            """,
-            efficient="""
+            """),
+            efficient=multipyline("""
                 cache = {}
                 def get_data(key):
                     if key in cache:
@@ -201,7 +202,7 @@ class CachingRule(Rule):
                     result = fetch_from_remote_api(key)
                     cache[key] = result
                     return result
-            """,
+            """),
         ),
     )
 
@@ -250,15 +251,15 @@ class BulkOperationRule(Rule):
             "Energy-Efficient Data Processing - ACM SIGMOD",
         ],
         examples=RuleExample(
-            inefficient="""
+            inefficient=multipyline("""
                 # Individual inserts
                 for item in items:
                     db.execute("INSERT INTO table VALUES (?)", (item,))
-            """,
-            efficient="""
+            """),
+            efficient=multipyline("""
                 # Bulk insert
                 db.executemany("INSERT INTO table VALUES (?)", [(item,) for item in items])
-            """,
+            """),
         ),
     )
 

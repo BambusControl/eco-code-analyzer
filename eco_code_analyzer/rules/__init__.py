@@ -9,7 +9,7 @@ from . import algorithm
 from . import energy
 from . import io
 from . import memory
-from .base import RuleExample, Rule, RuleMetadata, RuleRegistry
+from .base import Rule, RuleMetadata, RuleRegistry, RuleExample
 from .context import AnalysisContext
 from .patterns import PatternDetector
 

@@ -3,8 +3,9 @@ Energy efficiency rules for eco-code-analyzer.
 """
 
 import ast
+from multipyline import multipyline
 
-from .base import Rule, RuleMetadata, RuleRegistry
+from .base import Rule, RuleMetadata, RuleRegistry, RuleExample
 from .context import AnalysisContext
 from .patterns import PatternDetector
 
@@ -23,14 +24,14 @@ class ListComprehensionRule(Rule):
             "Green Algorithms: Quantifying the Carbon Footprint of Computation - Lannelongue et al.",
         ],
         examples=RuleExample(
-            inefficient="""
+            inefficient=multipyline("""
                 result = []
                 for item in items:
                     result.append(item * 2)
-            """,
-            efficient="""
+            """),
+            efficient=multipyline("""
                 result = [item * 2 for item in items]
-            """,
+            """),
         ),
     )
 
@@ -63,16 +64,16 @@ class GeneratorExpressionRule(Rule):
             "Energy Efficiency across Programming Languages - Pereira et al.",
         ],
         examples=RuleExample(
-            inefficient="""
+            inefficient=multipyline("""
                 # Creating a list just to iterate once
                 for x in [f(y) for y in items]:
                     print(x)
-            """,
-            efficient="""
+            """),
+            efficient=multipyline("""
                 # Using a generator expression
                 for x in (f(y) for y in items):
                     print(x)
-            """,
+            """),
         ),
     )
 
@@ -103,16 +104,16 @@ class LazyEvaluationRule(Rule):
             "Software Development Methodology in a Green IT Environment - Kern et al.",
         ],
         examples=RuleExample(
-            inefficient="""
+            inefficient=multipyline("""
                 found = False
                 for item in items:
                     if condition(item):
                         found = True
                         break
-            """,
-            efficient="""
+            """),
+            efficient=multipyline("""
                 found = any(condition(item) for item in items)
-            """,
+            """),
         ),
     )
 
@@ -159,16 +160,16 @@ class NestedLoopRule(Rule):
             "Energy Efficiency across Programming Languages - Pereira et al.",
         ],
         examples=RuleExample(
-            inefficient="""
+            inefficient=multipyline("""
                 for i in range(n):
                     for j in range(n):
                         for k in range(n):
                             # O(n³) complexity
-            """,
-            efficient="""
+            """),
+            efficient=multipyline("""
                 # Use more efficient algorithms or data structures
                 # Or vectorized operations if possible
-            """,
+            """),
         ),
     )
 
@@ -204,16 +205,16 @@ class RedundantComputationRule(Rule):
             "Energy-Efficient Software Development - Johann et al.",
         ],
         examples=RuleExample(
-            inefficient="""
+            inefficient=multipyline("""
                 for i in range(n):
                     x = expensive_function()  # Same result each time
                     result.append(i + x)
-            """,
-            efficient="""
+            """),
+            efficient=multipyline("""
                 x = expensive_function()  # Computed once
                 for i in range(n):
                     result.append(i + x)
-            """,
+            """),
         ),
     )
 

@@ -3,8 +3,9 @@ Algorithm efficiency rules for eco-code-analyzer.
 """
 
 import ast
+from multipyline import multipyline
 
-from .base import Rule, RuleMetadata, RuleRegistry
+from .base import Rule, RuleMetadata, RuleRegistry, RuleExample
 from .context import AnalysisContext
 
 
@@ -22,7 +23,7 @@ class TimeComplexityRule(Rule):
             "Energy Complexity of Algorithms - Journal of ACM",
         ],
         examples=RuleExample(
-            inefficient="""
+            inefficient=multipyline("""
                 # Bubble sort: O(n²) time complexity
                 def bubble_sort(arr):
                     n = len(arr)
@@ -30,12 +31,12 @@ class TimeComplexityRule(Rule):
                         for j in range(0, n - i - 1):
                             if arr[j] > arr[j + 1]:
                                 arr[j], arr[j + 1] = arr[j + 1], arr[j]
-            """,
-            efficient="""
+            """),
+            efficient=multipyline("""
                 # Using built-in sort: O(n log n) time complexity
                 def efficient_sort(arr):
                     return sorted(arr)
-            """,
+            """),
         ),
     )
 
@@ -76,7 +77,7 @@ class SpaceComplexityRule(Rule):
             "Memory-Efficient Algorithms - SIAM Journal on Computing",
         ],
         examples=RuleExample(
-            inefficient="""
+            inefficient=multipyline("""
                 # Creating multiple copies of large data
                 def process_data(data):
                     copy1 = data.copy()
@@ -84,14 +85,14 @@ class SpaceComplexityRule(Rule):
                     copy2 = data.copy()
                     # Process copy2
                     return copy1, copy2
-            """,
-            efficient="""
+            """),
+            efficient=multipyline("""
                 # Processing in-place or with minimal copies
                 def process_data(data):
                     result1 = process_first(data)
                     result2 = process_second(data)
                     return result1, result2
-            """,
+            """),
         ),
     )
 
@@ -132,17 +133,17 @@ class AlgorithmSelectionRule(Rule):
             "Energy-Aware Algorithm Selection - IEEE Transactions",
         ],
         examples=RuleExample(
-            inefficient="""
+            inefficient=multipyline("""
                 # Using a complex algorithm for a simple task
                 def find_max(numbers):
                     numbers.sort()  # O(n log n)
                     return numbers[-1]
-            """,
-            efficient="""
+            """),
+            efficient=multipyline("""
                 # Using a simpler algorithm for the same task
                 def find_max(numbers):
                     return max(numbers)  # O(n)
-            """,
+            """),
         ),
     )
 
@@ -203,7 +204,7 @@ class DataStructureSelectionRule(Rule):
             "Energy-Efficient Data Structures - ACM Computing Surveys",
         ],
         examples=RuleExample(
-            inefficient="""
+            inefficient=multipyline("""
                 # Using a list for frequent lookups by key
                 data = [(key1, value1), (key2, value2), ...]
 
@@ -212,14 +213,14 @@ class DataStructureSelectionRule(Rule):
                         if k == key:
                             return v
                     return None
-            """,
-            efficient="""
+            """),
+            efficient=multipyline("""
                 # Using a dictionary for frequent lookups by key
                 data = {key1: value1, key2: value2, ...}
 
                 def get_value(key):
                     return data.get(key)  # O(1) lookup
-            """,
+            """),
         ),
     )
 
@@ -266,14 +267,14 @@ class RecursionOptimizationRule(Rule):
             "Energy-Efficient Recursive Algorithms - SIAM Journal",
         ],
         examples=RuleExample(
-            inefficient="""
+            inefficient=multipyline("""
                 # Naive recursive Fibonacci with redundant calculations
                 def fibonacci(n):
                     if n <= 1:
                         return n
                     return fibonacci(n-1) + fibonacci(n-2)  # Exponential time complexity
-            """,
-            efficient="""
+            """),
+            efficient=multipyline("""
                 # Memoized Fibonacci to avoid redundant calculations
                 memo = {}
                 def fibonacci(n):
@@ -283,7 +284,7 @@ class RecursionOptimizationRule(Rule):
                         return n
                     memo[n] = fibonacci(n-1) + fibonacci(n-2)
                     return memo[n]
-            """,
+            """),
         ),
     )
 

@@ -3,8 +3,9 @@ Memory usage rules for eco-code-analyzer.
 """
 
 import ast
+from multipyline import multipyline
 
-from .base import Rule, RuleMetadata, RuleRegistry
+from .base import Rule, RuleMetadata, RuleRegistry, RuleExample
 from .context import AnalysisContext
 
 
@@ -22,16 +23,16 @@ class ContextManagerRule(Rule):
             "Resource Management in Python - PyCon 2019",
         ],
         examples=RuleExample(
-            inefficient="""
+            inefficient=multipyline("""
                 f = open('file.txt', 'r')
                 data = f.read()
                 f.close()  # Might not be called if an exception occurs
-            """,
-            efficient="""
+            """),
+            efficient=multipyline("""
                 with open('file.txt', 'r') as f:
                     data = f.read()
                 # File is automatically closed, even if an exception occurs
-            """,
+            """),
         ),
     )
 
@@ -71,17 +72,17 @@ class GlobalVariableRule(Rule):
             "Memory Management in Python - PyCon 2020",
         ],
         examples=RuleExample(
-            inefficient="""
+            inefficient=multipyline("""
                 global_data = {}  # Global variable
 
                 def process_data(key, value):
                     global_data[key] = value  # Modifying global state
-            """,
-            efficient="""
+            """),
+            efficient=multipyline("""
                 def process_data(data, key, value):
                     data[key] = value  # Explicit parameter passing
                     return data
-            """,
+            """),
         ),
     )
 
@@ -111,18 +112,18 @@ class MemoryEfficientDataStructureRule(Rule):
             "Memory Efficient Python - Raymond Hettinger",
         ],
         examples=RuleExample(
-            inefficient="""
+            inefficient=multipyline("""
                 # Using a list for membership testing
                 items = [1, 2, 3, 4, 5]
                 if x in items:  # O(n) operation
                     print("Found")
-            """,
-            efficient="""
+            """),
+            efficient=multipyline("""
                 # Using a set for membership testing
                 items = {1, 2, 3, 4, 5}
                 if x in items:  # O(1) operation
                     print("Found")
-            """,
+            """),
         ),
     )
 
@@ -160,7 +161,7 @@ class MemoryLeakRule(Rule):
             "Tracking Down Memory Leaks in Python - PyCon 2018",
         ],
         examples=RuleExample(
-            inefficient="""
+            inefficient=multipyline("""
                 class Node:
                     def __init__(self, parent=None):
                         self.parent = parent
@@ -169,8 +170,8 @@ class MemoryLeakRule(Rule):
                     def add_child(self, child):
                         self.children.append(child)
                         child.parent = self  # Creates a circular reference
-            """,
-            efficient="""
+            """),
+            efficient=multipyline("""
                 class Node:
                     def __init__(self, parent=None):
                         self.parent = parent
@@ -179,7 +180,7 @@ class MemoryLeakRule(Rule):
                     def add_child(self, child):
                         self.children.append(child)
                         child.parent = weakref.ref(self)  # Use weak reference
-            """,
+            """),
         ),
     )
 
@@ -229,19 +230,19 @@ class LargeObjectLifetimeRule(Rule):
             "Python Memory Management Best Practices - PyCon 2021",
         ],
         examples=RuleExample(
-            inefficient="""
+            inefficient=multipyline("""
                 # Large object created at module level
                 large_data = load_large_dataset()
 
                 def process_small_part(index):
                     return large_data[index]  # Only uses a small part
-            """,
-            efficient="""
+            """),
+            efficient=multipyline("""
                 def process_small_part(index):
                     # Load only what's needed
                     data_item = load_specific_data(index)
                     return data_item
-            """,
+            """),
         ),
     )
 

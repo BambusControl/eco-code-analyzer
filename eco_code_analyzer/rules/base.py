@@ -4,12 +4,15 @@ Base classes for the rule system.
 
 import ast
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Type, Literal
+from typing import Dict, List, Optional, Type, Literal, TypedDict
 
 from eco_code_analyzer.data import Example, Suggestion, AppConfig
 from eco_code_analyzer.rules.context import AnalysisContext
-from eco_code_analyzer.rules.rule_example import RuleExample
 
+
+class RuleExample(TypedDict):
+    efficient: str
+    inefficient: str
 
 @dataclass
 class RuleMetadata:
