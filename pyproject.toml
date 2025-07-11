@@ -24,6 +24,7 @@ dependencies = [
     "astroid",
     "gitpython",
     "matplotlib",
+    "multipyline",
     "typing_extensions; python_version < '3.8'",
 ]
 
@@ -41,3 +42,6 @@ dev = [
 
 [project.scripts]
 eco-code-analyzer = "eco_code_analyzer.cli:main"
+
+[tool.uv.sources]
+multipyline = { path = "../multipyline" }
