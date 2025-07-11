@@ -22,21 +22,21 @@ class FileOperationRule(Rule):
             "https://doi.org/10.1145/3136014.3136031",
             "Efficient I/O in Python - PyCon 2020",
         ],
-        examples={
-            "inefficient": """
+        examples=RuleExample(
+            inefficient="""
                 # Reading a file line by line with multiple open/close
                 for i in range(100):
                     with open('large_file.txt', 'r') as f:
                         line = f.readlines()[i]  # Reads entire file each time
             """,
-            "efficient": """
+            efficient="""
                 # Reading a file once
                 with open('large_file.txt', 'r') as f:
                     lines = f.readlines()
                 for i in range(100):
                     line = lines[i]
             """,
-        },
+        ),
     )
 
     def check(self, node: ast.AST, context: AnalysisContext) -> float:
@@ -80,21 +80,21 @@ class NetworkOperationRule(Rule):
             "https://doi.org/10.1145/3136014.3136031",
             "Green Networking - IEEE Communications Magazine",
         ],
-        examples={
-            "inefficient": """
+        examples=RuleExample(
+            inefficient="""
                 # Making multiple API calls in a loop
                 results = []
                 for id in ids:
                     response = requests.get(f'https://api.example.com/items/{id}')
                     results.append(response.json())
             """,
-            "efficient": """
+            efficient="""
                 # Making a single batch API call
                 ids_param = ','.join(ids)
                 response = requests.get(f'https://api.example.com/items?ids={ids_param}')
                 results = response.json()
             """,
-        },
+        ),
     )
 
     def check(self, node: ast.AST, context: AnalysisContext) -> float:
@@ -131,19 +131,19 @@ class DatabaseOperationRule(Rule):
             "https://doi.org/10.1145/3136014.3136031",
             "Energy Efficiency in Database Systems - ACM SIGMOD",
         ],
-        examples={
-            "inefficient": """
+        examples=RuleExample(
+            inefficient="""
                 # N+1 query problem
                 users = db.query(User).all()
                 for user in users:
                     # This makes a separate query for each user
                     orders = db.query(Order).filter(Order.user_id == user.id).all()
             """,
-            "efficient": """
+            efficient="""
                 # Single query with join
                 user_orders = db.query(User, Order).join(Order, User.id == Order.user_id).all()
             """,
-        },
+        ),
     )
 
     def check(self, node: ast.AST, context: AnalysisContext) -> float:
@@ -186,14 +186,14 @@ class CachingRule(Rule):
             "https://doi.org/10.1145/3136014.3136031",
             "Caching Strategies for Energy-Efficient Computing - IEEE Transactions",
         ],
-        examples={
-            "inefficient": """
+        examples=RuleExample(
+            inefficient="""
                 def get_data(key):
                     # Expensive operation performed every time
                     result = fetch_from_remote_api(key)
                     return result
             """,
-            "efficient": """
+            efficient="""
                 cache = {}
                 def get_data(key):
                     if key in cache:
@@ -202,7 +202,7 @@ class CachingRule(Rule):
                     cache[key] = result
                     return result
             """,
-        },
+        ),
     )
 
     def check(self, node: ast.AST, context: AnalysisContext) -> float:
@@ -249,17 +249,17 @@ class BulkOperationRule(Rule):
             "https://doi.org/10.1145/3136014.3136031",
             "Energy-Efficient Data Processing - ACM SIGMOD",
         ],
-        examples={
-            "inefficient": """
+        examples=RuleExample(
+            inefficient="""
                 # Individual inserts
                 for item in items:
                     db.execute("INSERT INTO table VALUES (?)", (item,))
             """,
-            "efficient": """
+            efficient="""
                 # Bulk insert
                 db.executemany("INSERT INTO table VALUES (?)", [(item,) for item in items])
             """,
-        },
+        ),
     )
 
     def check(self, node: ast.AST, context: AnalysisContext) -> float:

@@ -21,8 +21,8 @@ class TimeComplexityRule(Rule):
             "https://doi.org/10.1145/3136014.3136031",
             "Energy Complexity of Algorithms - Journal of ACM",
         ],
-        examples={
-            "inefficient": """
+        examples=RuleExample(
+            inefficient="""
                 # Bubble sort: O(n²) time complexity
                 def bubble_sort(arr):
                     n = len(arr)
@@ -31,12 +31,12 @@ class TimeComplexityRule(Rule):
                             if arr[j] > arr[j + 1]:
                                 arr[j], arr[j + 1] = arr[j + 1], arr[j]
             """,
-            "efficient": """
+            efficient="""
                 # Using built-in sort: O(n log n) time complexity
                 def efficient_sort(arr):
                     return sorted(arr)
             """,
-        },
+        ),
     )
 
     def check(self, node: ast.AST, context: AnalysisContext) -> float:
@@ -75,8 +75,8 @@ class SpaceComplexityRule(Rule):
             "https://doi.org/10.1145/3136014.3136031",
             "Memory-Efficient Algorithms - SIAM Journal on Computing",
         ],
-        examples={
-            "inefficient": """
+        examples=RuleExample(
+            inefficient="""
                 # Creating multiple copies of large data
                 def process_data(data):
                     copy1 = data.copy()
@@ -85,14 +85,14 @@ class SpaceComplexityRule(Rule):
                     # Process copy2
                     return copy1, copy2
             """,
-            "efficient": """
+            efficient="""
                 # Processing in-place or with minimal copies
                 def process_data(data):
                     result1 = process_first(data)
                     result2 = process_second(data)
                     return result1, result2
             """,
-        },
+        ),
     )
 
     def check(self, node: ast.AST, context: AnalysisContext) -> float:
@@ -131,19 +131,19 @@ class AlgorithmSelectionRule(Rule):
             "https://doi.org/10.1145/3136014.3136031",
             "Energy-Aware Algorithm Selection - IEEE Transactions",
         ],
-        examples={
-            "inefficient": """
+        examples=RuleExample(
+            inefficient="""
                 # Using a complex algorithm for a simple task
                 def find_max(numbers):
                     numbers.sort()  # O(n log n)
                     return numbers[-1]
             """,
-            "efficient": """
+            efficient="""
                 # Using a simpler algorithm for the same task
                 def find_max(numbers):
                     return max(numbers)  # O(n)
             """,
-        },
+        ),
     )
 
     def check(self, node: ast.AST, context: AnalysisContext) -> float:
@@ -202,8 +202,8 @@ class DataStructureSelectionRule(Rule):
             "https://doi.org/10.1145/3136014.3136031",
             "Energy-Efficient Data Structures - ACM Computing Surveys",
         ],
-        examples={
-            "inefficient": """
+        examples=RuleExample(
+            inefficient="""
                 # Using a list for frequent lookups by key
                 data = [(key1, value1), (key2, value2), ...]
 
@@ -213,14 +213,14 @@ class DataStructureSelectionRule(Rule):
                             return v
                     return None
             """,
-            "efficient": """
+            efficient="""
                 # Using a dictionary for frequent lookups by key
                 data = {key1: value1, key2: value2, ...}
 
                 def get_value(key):
                     return data.get(key)  # O(1) lookup
             """,
-        },
+        ),
     )
 
     def check(self, node: ast.AST, context: AnalysisContext) -> float:
@@ -265,15 +265,15 @@ class RecursionOptimizationRule(Rule):
             "https://doi.org/10.1145/3136014.3136031",
             "Energy-Efficient Recursive Algorithms - SIAM Journal",
         ],
-        examples={
-            "inefficient": """
+        examples=RuleExample(
+            inefficient="""
                 # Naive recursive Fibonacci with redundant calculations
                 def fibonacci(n):
                     if n <= 1:
                         return n
                     return fibonacci(n-1) + fibonacci(n-2)  # Exponential time complexity
             """,
-            "efficient": """
+            efficient="""
                 # Memoized Fibonacci to avoid redundant calculations
                 memo = {}
                 def fibonacci(n):
@@ -284,7 +284,7 @@ class RecursionOptimizationRule(Rule):
                     memo[n] = fibonacci(n-1) + fibonacci(n-2)
                     return memo[n]
             """,
-        },
+        ),
     )
 
     def check(self, node: ast.AST, context: AnalysisContext) -> float:

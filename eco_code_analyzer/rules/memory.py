@@ -21,18 +21,18 @@ class ContextManagerRule(Rule):
             "https://doi.org/10.1145/3136014.3136031",
             "Resource Management in Python - PyCon 2019",
         ],
-        examples={
-            "inefficient": """
+        examples=RuleExample(
+            inefficient="""
                 f = open('file.txt', 'r')
                 data = f.read()
                 f.close()  # Might not be called if an exception occurs
             """,
-            "efficient": """
+            efficient="""
                 with open('file.txt', 'r') as f:
                     data = f.read()
                 # File is automatically closed, even if an exception occurs
             """,
-        },
+        ),
     )
 
     def check(self, node: ast.AST, context: AnalysisContext) -> float:
@@ -70,19 +70,19 @@ class GlobalVariableRule(Rule):
             "https://doi.org/10.1145/3136014.3136031",
             "Memory Management in Python - PyCon 2020",
         ],
-        examples={
-            "inefficient": """
+        examples=RuleExample(
+            inefficient="""
                 global_data = {}  # Global variable
 
                 def process_data(key, value):
                     global_data[key] = value  # Modifying global state
             """,
-            "efficient": """
+            efficient="""
                 def process_data(data, key, value):
                     data[key] = value  # Explicit parameter passing
                     return data
             """,
-        },
+        ),
     )
 
     def check(self, node: ast.AST, context: AnalysisContext) -> float:
@@ -110,20 +110,20 @@ class MemoryEfficientDataStructureRule(Rule):
             "https://doi.org/10.1145/3136014.3136031",
             "Memory Efficient Python - Raymond Hettinger",
         ],
-        examples={
-            "inefficient": """
+        examples=RuleExample(
+            inefficient="""
                 # Using a list for membership testing
                 items = [1, 2, 3, 4, 5]
                 if x in items:  # O(n) operation
                     print("Found")
             """,
-            "efficient": """
+            efficient="""
                 # Using a set for membership testing
                 items = {1, 2, 3, 4, 5}
                 if x in items:  # O(1) operation
                     print("Found")
             """,
-        },
+        ),
     )
 
     def check(self, node: ast.AST, context: AnalysisContext) -> float:
@@ -159,8 +159,8 @@ class MemoryLeakRule(Rule):
             "https://doi.org/10.1145/3136014.3136031",
             "Tracking Down Memory Leaks in Python - PyCon 2018",
         ],
-        examples={
-            "inefficient": """
+        examples=RuleExample(
+            inefficient="""
                 class Node:
                     def __init__(self, parent=None):
                         self.parent = parent
@@ -170,7 +170,7 @@ class MemoryLeakRule(Rule):
                         self.children.append(child)
                         child.parent = self  # Creates a circular reference
             """,
-            "efficient": """
+            efficient="""
                 class Node:
                     def __init__(self, parent=None):
                         self.parent = parent
@@ -180,7 +180,7 @@ class MemoryLeakRule(Rule):
                         self.children.append(child)
                         child.parent = weakref.ref(self)  # Use weak reference
             """,
-        },
+        ),
     )
 
     def check(self, node: ast.AST, context: AnalysisContext) -> float:
@@ -228,21 +228,21 @@ class LargeObjectLifetimeRule(Rule):
             "https://doi.org/10.1145/3136014.3136031",
             "Python Memory Management Best Practices - PyCon 2021",
         ],
-        examples={
-            "inefficient": """
+        examples=RuleExample(
+            inefficient="""
                 # Large object created at module level
                 large_data = load_large_dataset()
 
                 def process_small_part(index):
                     return large_data[index]  # Only uses a small part
             """,
-            "efficient": """
+            efficient="""
                 def process_small_part(index):
                     # Load only what's needed
                     data_item = load_specific_data(index)
                     return data_item
             """,
-        },
+        ),
     )
 
     def check(self, node: ast.AST, context: AnalysisContext) -> float:

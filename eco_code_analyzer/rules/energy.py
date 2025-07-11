@@ -22,16 +22,16 @@ class ListComprehensionRule(Rule):
             "https://doi.org/10.1145/3136014.3136031",
             "Green Algorithms: Quantifying the Carbon Footprint of Computation - Lannelongue et al.",
         ],
-        examples={
-            "inefficient": """
+        examples=RuleExample(
+            inefficient="""
                 result = []
                 for item in items:
                     result.append(item * 2)
             """,
-            "efficient": """
+            efficient="""
                 result = [item * 2 for item in items]
             """,
-        },
+        ),
     )
 
     def check(self, node: ast.AST, context: AnalysisContext) -> float:
@@ -62,18 +62,18 @@ class GeneratorExpressionRule(Rule):
             "https://doi.org/10.1145/3136014.3136031",
             "Energy Efficiency across Programming Languages - Pereira et al.",
         ],
-        examples={
-            "inefficient": """
+        examples=RuleExample(
+            inefficient="""
                 # Creating a list just to iterate once
                 for x in [f(y) for y in items]:
                     print(x)
             """,
-            "efficient": """
+            efficient="""
                 # Using a generator expression
                 for x in (f(y) for y in items):
                     print(x)
             """,
-        },
+        ),
     )
 
     def check(self, node: ast.AST, context: AnalysisContext) -> float:
@@ -102,18 +102,18 @@ class LazyEvaluationRule(Rule):
             "https://doi.org/10.1145/3136014.3136031",
             "Software Development Methodology in a Green IT Environment - Kern et al.",
         ],
-        examples={
-            "inefficient": """
+        examples=RuleExample(
+            inefficient="""
                 found = False
                 for item in items:
                     if condition(item):
                         found = True
                         break
             """,
-            "efficient": """
+            efficient="""
                 found = any(condition(item) for item in items)
             """,
-        },
+        ),
     )
 
     def check(self, node: ast.AST, context: AnalysisContext) -> float:
@@ -158,18 +158,18 @@ class NestedLoopRule(Rule):
             "https://doi.org/10.1145/3136014.3136031",
             "Energy Efficiency across Programming Languages - Pereira et al.",
         ],
-        examples={
-            "inefficient": """
+        examples=RuleExample(
+            inefficient="""
                 for i in range(n):
                     for j in range(n):
                         for k in range(n):
                             # O(n³) complexity
             """,
-            "efficient": """
+            efficient="""
                 # Use more efficient algorithms or data structures
                 # Or vectorized operations if possible
             """,
-        },
+        ),
     )
 
     def check(self, node: ast.AST, context: AnalysisContext) -> float:
@@ -203,18 +203,18 @@ class RedundantComputationRule(Rule):
             "https://doi.org/10.1145/3136014.3136031",
             "Energy-Efficient Software Development - Johann et al.",
         ],
-        examples={
-            "inefficient": """
+        examples=RuleExample(
+            inefficient="""
                 for i in range(n):
                     x = expensive_function()  # Same result each time
                     result.append(i + x)
             """,
-            "efficient": """
+            efficient="""
                 x = expensive_function()  # Computed once
                 for i in range(n):
                     result.append(i + x)
             """,
-        },
+        ),
     )
 
     def check(self, node: ast.AST, context: AnalysisContext) -> float:
