@@ -4,13 +4,14 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "eco-code-analyzer"
-version = "0.4.0"
+version = "0.4.1"
 authors = [
   { name="Moudather Chelbi", email="moudather.chelbi@gmail.com" },
+  { name="Mojmír Majer", email="mojmir.majer@gmail.com" },
 ]
 description = "A Python library that analyzes code for ecological impact and provides optimization suggestions with enhanced rule system"
 readme = "README.md"
-requires-python = ">=3.7"
+requires-python = ">=3.12"
 keywords = ["code analysis", "environmental impact", "energy efficiency", "eco-friendly coding", "static analysis", "green computing"]
 classifiers = [
     "Programming Language :: Python :: 3",
@@ -21,20 +22,19 @@ classifiers = [
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 dependencies = [
-    "astroid",
-    "gitpython",
-    "matplotlib",
-    "multipyline",
-    "typing_extensions; python_version < '3.8'",
+    "astroid>=3.3.10",
+    "gitpython>=3.1.44",
+    "matplotlib>=3.10.3",
+    "multipyline>=0.1.0",
 ]
 
 [project.optional-dependencies]
 dev = [
-    "pytest",
-    "flake8",
-    "black",
-    "mypy",
-    "coverage",
+    "black>=25.1.0",
+    "coverage>=7.9.2",
+    "flake8>=7.3.0",
+    "mypy>=1.16.1",
+    "pytest>=8.4.1",
 ]
 
 [project.urls]
@@ -42,6 +42,3 @@ dev = [
 
 [project.scripts]
 eco-code-analyzer = "eco_code_analyzer.cli:main"
-
-[tool.uv.sources]
-multipyline = { path = "../multipyline" }

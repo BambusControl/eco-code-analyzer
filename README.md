@@ -8,6 +8,8 @@ Eco-Code Analyzer is a Python library that analyzes code for its ecological impa
 
 Install Eco-Code Analyzer via pip:
 
+> [!warn] Use `git+https://github.com/BambusControl/eco-code-analyzer` for installation
+
 ```bash
 pip install eco-code-analyzer
 ```
